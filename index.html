@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Automated Pinterest Pin Batch Engine | 100% Client-Side BYOK Studio</title>
+  <meta name="description" content="Generate high-CTR 1000x1500 Pinterest pin graphics in seconds from any blog post or product description. Uses direct AI generation with local Canvas rendering and zip downloads. Zero server storage.">
+  <meta name="keywords" content="pinterest pin maker, automated pin generator, pin batch engine, pinterest marketing, byok pin studio, canvas pin generator, 1000x1500 graphic generator">
+  <link rel="canonical" href="https://greentools-dev.github.io/byok-pin-engine/">
+  <meta property="og:title" content="Automated Pinterest Pin Batch Engine">
+  <meta property="og:description" content="Auto-generate 3 high-converting 1000x1500 Pinterest pins from any topic or URL. 100% private in-browser tool.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://greentools-dev.github.io/byok-pin-engine/">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- JSZip CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #f8fafc;
+      background-image: 
+        radial-gradient(rgba(15, 23, 42, 0.08) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+  </style>
+
+  <!-- Structured Data JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Automated Pinterest Pin Batch Engine",
+        "url": "https://greentools-dev.github.io/byok-pin-engine/",
+        "applicationCategory": "DesignApplication",
+        "operatingSystem": "All",
+        "browserRequirements": "Requires JavaScript. Requires HTML5 Canvas.",
+        "description": "Generates three high-CTR 1000x1500 vertical Pinterest pins with distinct marketing angles (listicle, curiosity, direct benefit) using client-side AI and Canvas.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "What dimensions are generated?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Pins are generated at standard high-resolution 1000x1500 vertical pixels (2:3 aspect ratio), the exact recommended specification for Pinterest feeds."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "What are the 3 marketing angles?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "The engine automatically generates a Curiosity/Intrigue hook, a Listicle/Action Guide, and a Direct Transformation benefit angle to maximize click-through rate variations."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does this tool work without an API key?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes! Click 'Try Demo (No Key)' to load realistic sample pins, customize colors and fonts, and download full-resolution PNGs or ZIP archives immediately."
+            }
+          }
+        ]
+      }
+    ]
+  </script>
+</head>
+<body class="min-h-screen flex flex-col font-sans text-slate-800 antialiased selection:bg-brand-100 selection:text-brand-900">
+
+  <!-- Header -->
+  <header class="border-b border-slate-200/80 bg-white/90 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-sm shadow-red-500/20">
+          <i data-lucide="pin" class="w-5 h-5"></i>
+        </div>
+        <div>
+          <span class="font-extrabold text-slate-900 tracking-tight text-lg">GreenTools<span class="text-red-600">.dev</span></span>
+          <span class="hidden sm:inline-block ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200/60">Pin Engine</span>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <!-- BYOK Key Trigger -->
+        <button type="button" id="btn-open-settings" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-2xs">
+          <i data-lucide="key" class="w-3.5 h-3.5 text-red-600"></i>
+          <span id="key-status-label">API Key: Not Set</span>
+        </button>
+        <a href="https://github.com/greentools-dev/byok-pin-engine" target="_blank" rel="noopener noreferrer" class="text-slate-500 hover:text-slate-900 transition-colors p-1.5">
+          <i data-lucide="github" class="w-5 h-5"></i>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Error / Alert Banner -->
+  <div id="alert-banner" class="hidden max-w-7xl mx-auto px-4 mt-4">
+    <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs font-medium text-amber-800 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-2">
+        <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0"></i>
+        <span id="alert-message">Notice message</span>
+      </div>
+      <button type="button" id="btn-close-alert" class="text-amber-600 hover:text-amber-800 p-1">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Hero & Primary Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-8 md:py-10 flex flex-col">
+    <div class="text-center max-w-2xl mx-auto mb-8">
+      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+        Automated Pinterest Pin Batch Engine
+      </h1>
+      <p class="mt-3 text-slate-600 text-sm sm:text-base leading-relaxed">
+        Turn any blog article or product description into three high-converting 1000x1500 vertical pins. Bring your Gemini or OpenAI API key, or test in instant demo mode.
+      </p>
+    </div>
+
+    <!-- Top Generation Input Card -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm mb-8 max-w-4xl mx-auto w-full flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+          <i data-lucide="sparkles" class="w-4 h-4 text-red-600"></i>
+          Content Input &amp; Branding
+        </span>
+        <button type="button" id="btn-demo-mode" class="text-xs font-semibold text-red-700 hover:text-red-800 underline underline-offset-2">
+          Try Demo (No Key)
+        </button>
+      </div>
+
+      <div>
+        <label for="input-content" class="block text-xs font-semibold text-slate-700 mb-1.5">Blog Post Title, Description, or Product Hook</label>
+        <textarea id="input-content" rows="2" placeholder="e.g. 7 Low-Stress Passive Income Ideas You Can Start from Home in 2026 with Zero Capital..." class="w-full p-3 text-xs font-sans rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+        <div>
+          <label for="input-domain" class="block font-semibold text-slate-700 mb-1">Website Domain Badge</label>
+          <input type="text" id="input-domain" value="yourwebsite.com" class="w-full px-3 py-1.5 text-xs font-mono rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-red-500">
+        </div>
+        <div>
+          <label for="select-niche" class="block font-semibold text-slate-700 mb-1">Niche Category Tag</label>
+          <input type="text" id="input-tag" value="PASSIVE INCOME" class="w-full px-3 py-1.5 text-xs font-mono uppercase rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-red-500">
+        </div>
+        <div>
+          <label for="select-palette" class="block font-semibold text-slate-700 mb-1">Color Palette Theme</label>
+          <select id="select-palette" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-red-500">
+            <option value="crimson" selected>Crimson Fire (High CTR)</option>
+            <option value="emerald">Emerald Growth</option>
+            <option value="midnight">Midnight Violet</option>
+            <option value="gold">Warm Amber Gold</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pt-2 flex items-center justify-between gap-3 flex-wrap">
+        <span class="text-[11px] text-slate-400">Generates 3 angles: Curiosity Hook, Listicle Guide, and Direct Benefit.</span>
+        <button type="button" id="btn-generate-ai" class="py-2.5 px-6 rounded-xl bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-bold text-xs transition-all shadow-md shadow-red-600/20 flex items-center justify-center gap-2">
+          <i data-lucide="wand-2" class="w-4 h-4"></i>
+          <span id="label-generate">Generate 3 Pin Batch</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Active 3-Pin Gallery Showcase -->
+    <div class="flex items-center justify-between mb-4 max-w-6xl mx-auto w-full">
+      <div class="flex items-center gap-2">
+        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Generated Pin Batch (1000 &times; 1500)</h2>
+        <span class="text-xs px-2 py-0.5 rounded-full bg-red-50 text-red-700 font-mono font-bold">3 Variations</span>
+      </div>
+      <button type="button" id="btn-download-all-zip" class="py-2 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all shadow-sm flex items-center gap-1.5">
+        <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i>
+        <span>Download All 3 Pins (.zip)</span>
+      </button>
+    </div>
+
+    <!-- 3-Pin Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto w-full">
+      
+      <!-- Pin 1: Curiosity Angle -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col gap-3">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-slate-900">Angle 1: Curiosity Hook</span>
+          <button type="button" class="btn-download-single text-xs text-red-600 hover:text-red-800 font-semibold" data-pin="0">Download PNG</button>
+        </div>
+        <div class="relative w-full aspect-[2/3] rounded-xl overflow-hidden shadow-md border border-slate-200 bg-slate-900">
+          <canvas id="pin-canvas-0" width="1000" height="1500" class="w-full h-full object-contain"></canvas>
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-500 mb-1">Headline Text</label>
+          <input type="text" id="edit-headline-0" class="w-full px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-red-500">
+        </div>
+      </div>
+
+      <!-- Pin 2: Listicle Angle -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col gap-3">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-slate-900">Angle 2: Listicle Guide</span>
+          <button type="button" class="btn-download-single text-xs text-red-600 hover:text-red-800 font-semibold" data-pin="1">Download PNG</button>
+        </div>
+        <div class="relative w-full aspect-[2/3] rounded-xl overflow-hidden shadow-md border border-slate-200 bg-slate-900">
+          <canvas id="pin-canvas-1" width="1000" height="1500" class="w-full h-full object-contain"></canvas>
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-500 mb-1">Headline Text</label>
+          <input type="text" id="edit-headline-1" class="w-full px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-red-500">
+        </div>
+      </div>
+
+      <!-- Pin 3: Direct Benefit Angle -->
+      <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col gap-3">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-slate-900">Angle 3: Direct Benefit</span>
+          <button type="button" class="btn-download-single text-xs text-red-600 hover:text-red-800 font-semibold" data-pin="2">Download PNG</button>
+        </div>
+        <div class="relative w-full aspect-[2/3] rounded-xl overflow-hidden shadow-md border border-slate-200 bg-slate-900">
+          <canvas id="pin-canvas-2" width="1000" height="1500" class="w-full h-full object-contain"></canvas>
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-500 mb-1">Headline Text</label>
+          <input type="text" id="edit-headline-2" class="w-full px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-red-500">
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Sponsor Slot -->
+    <aside id="sponsor-slot" class="mt-12 p-5 rounded-2xl border border-dashed border-slate-300 bg-white text-center text-xs text-slate-500 max-w-3xl mx-auto shadow-2xs">
+      <span class="font-semibold text-slate-600 uppercase tracking-wider text-[11px] block mb-1">Sponsored</span>
+      Scale your visual content marketing and social traffic with GreenTools BYOK Studio.
+    </aside>
+
+    <!-- FAQ & Guide -->
+    <section class="mt-12 bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-sm max-w-4xl mx-auto w-full">
+      <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+        <i data-lucide="help-circle" class="w-5 h-5 text-red-600"></i>
+        Pinterest Pin Engine &amp; Frequently Asked Questions
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-600">
+        <div>
+          <h3 class="font-semibold text-slate-800 mb-1">Why test 3 different angles per post?</h3>
+          <p class="leading-relaxed">
+            Pinterest rewards content variety. A listicle pin appeals to organized researchers, a curiosity hook captures casual feed scrollers, and a direct benefit pin converts intent-driven searchers. Testing all three triples your algorithmic reach.
+          </p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-slate-800 mb-1">What resolution are these pins?</h3>
+          <p class="leading-relaxed">
+            All pins are rendered at 1000 &times; 1500 pixels. This matches Pinterest's official 2:3 vertical aspect ratio recommendation and prevents feed compression or pixelation.
+          </p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-slate-800 mb-1">How does the BYOK key work?</h3>
+          <p class="leading-relaxed">
+            Your API key is stored only in your private browser <code>localStorage</code>. Direct API calls are made from your client to Google Gemini or OpenAI with zero server tracking or data interception.
+          </p>
+        </div>
+        <div>
+          <h3 class="font-semibold text-slate-800 mb-1">Can I edit the text before downloading?</h3>
+          <p class="leading-relaxed">
+            Yes! Type into any of the three headline fields beneath each preview card to update the 1000x1500 canvas rendering immediately in real time.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- BYOK Settings Modal -->
+  <div id="settings-modal" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+          <i data-lucide="key" class="w-4 h-4 text-red-600"></i>
+          AI Provider &amp; API Key Settings
+        </h3>
+        <button type="button" id="btn-close-settings" class="text-slate-400 hover:text-slate-600">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <div class="text-xs text-slate-500 leading-relaxed">
+        Enter your API key. It is saved only in local storage on this computer and used for direct browser-to-API calls.
+      </div>
+
+      <!-- Provider Selector -->
+      <div>
+        <label for="select-provider" class="block text-xs font-semibold text-slate-700 mb-1">AI Provider</label>
+        <select id="select-provider" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-red-500">
+          <option value="gemini" selected>Google Gemini (Recommended &bull; Fast Free Tier)</option>
+          <option value="openai">OpenAI / OpenRouter</option>
+        </select>
+      </div>
+
+      <!-- Model Name -->
+      <div>
+        <label for="input-model" class="block text-xs font-semibold text-slate-700 mb-1">Model Name</label>
+        <input type="text" id="input-model" value="gemini-2.5-flash" class="w-full px-3 py-1.5 text-xs font-mono rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-red-500">
+      </div>
+
+      <!-- Key Input -->
+      <div>
+        <label for="input-api-key" class="block text-xs font-semibold text-slate-700 mb-1">API Key</label>
+        <input type="password" id="input-api-key" placeholder="AIzaSy... or sk-..." class="w-full px-3 py-2 text-xs font-mono rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-red-500">
+      </div>
+
+      <!-- Actions -->
+      <div class="pt-2 flex items-center justify-between gap-2">
+        <button type="button" id="btn-clear-key" class="px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+          Clear Key
+        </button>
+        <div class="flex items-center gap-2">
+          <button type="button" id="btn-cancel-settings" class="px-3.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 rounded-lg border border-slate-200 transition-colors">
+            Cancel
+          </button>
+          <button type="button" id="btn-save-settings" class="px-4 py-1.5 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm">
+            Save Settings
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200 bg-white mt-12 py-8">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-800">GreenTools.dev</span>
+        <span>&bull;</span>
+        <span>100% Client-Side Web Studios</span>
+      </div>
+      <div>
+        Zero Server Storage &bull; Private Local Keys &bull; No Telemetry
+      </div>
+    </div>
+  </footer>
+
+  <!-- Script Logic -->
+  <script>
+    lucide.createIcons();
+
+    // Default Demo Pins
+    const defaultPins = [
+      {
+        angle: 'Curiosity',
+        pill: 'SHOCKING TRUTH',
+        headline: 'The 1 Fatal Mistake Beginners Make with Client-Side Apps',
+        subtext: 'Avoid this expensive blunder before you ship your first project.'
+      },
+      {
+        angle: 'Listicle',
+        pill: 'STEP-BY-STEP GUIDE',
+        headline: '7 Free Developer Tools That Save 25+ Hours Every Week',
+        subtext: 'Simple browser-based utilities that replace paid subscriptions.'
+      },
+      {
+        angle: 'Direct Benefit',
+        pill: 'PROVEN METHOD',
+        headline: 'How to Ship 30 Live Production Web Tools with $0 Server Bills',
+        subtext: 'The complete zero-maintenance blueprint for solo creators.'
+      }
+    ];
+
+    let currentPins = JSON.parse(JSON.stringify(defaultPins));
+
+    // Color Palettes
+    const palettes = {
+      crimson: {
+        bgStart: '#881337',
+        bgMid: '#4c0519',
+        bgEnd: '#0f172a',
+        accent: '#f43f5e',
+        tagBg: '#ffe4e6',
+        tagText: '#9f1239'
+      },
+      emerald: {
+        bgStart: '#064e3b',
+        bgMid: '#022c22',
+        bgEnd: '#0f172a',
+        accent: '#10b981',
+        tagBg: '#d1fae5',
+        tagText: '#065f46'
+      },
+      midnight: {
+        bgStart: '#3b0764',
+        bgMid: '#1e1b4b',
+        bgEnd: '#09090b',
+        accent: '#a855f7',
+        tagBg: '#f3e8ff',
+        tagText: '#6b21a8'
+      },
+      gold: {
+        bgStart: '#78350f',
+        bgMid: '#451a03',
+        bgEnd: '#0c0a09',
+        accent: '#f59e0b',
+        tagBg: '#fef3c7',
+        tagText: '#92400e'
+      }
+    };
+
+    // DOM Elements
+    const inputContent = document.getElementById('input-content');
+    const inputDomain = document.getElementById('input-domain');
+    const inputTag = document.getElementById('input-tag');
+    const selectPalette = document.getElementById('select-palette');
+    const btnGenerateAi = document.getElementById('btn-generate-ai');
+    const labelGenerate = document.getElementById('label-generate');
+    const btnDemoMode = document.getElementById('btn-demo-mode');
+    const btnDownloadAllZip = document.getElementById('btn-download-all-zip');
+
+    const alertBanner = document.getElementById('alert-banner');
+    const alertMessage = document.getElementById('alert-message');
+    const btnCloseAlert = document.getElementById('btn-close-alert');
+
+    // Settings Modal Elements
+    const btnOpenSettings = document.getElementById('btn-open-settings');
+    const settingsModal = document.getElementById('settings-modal');
+    const btnCloseSettings = document.getElementById('btn-close-settings');
+    const btnCancelSettings = document.getElementById('btn-cancel-settings');
+    const btnSaveSettings = document.getElementById('btn-save-settings');
+    const btnClearKey = document.getElementById('btn-clear-key');
+    const inputApiKey = document.getElementById('input-api-key');
+    const selectProvider = document.getElementById('select-provider');
+    const inputModel = document.getElementById('input-model');
+    const keyStatusLabel = document.getElementById('key-status-label');
+
+    function loadSettings() {
+      const savedKey = localStorage.getItem('byok_api_key') || '';
+      const savedProvider = localStorage.getItem('byok_provider') || 'gemini';
+      const savedModel = localStorage.getItem('byok_model') || (savedProvider === 'gemini' ? 'gemini-2.5-flash' : 'gpt-4o-mini');
+
+      inputApiKey.value = savedKey;
+      selectProvider.value = savedProvider;
+      inputModel.value = savedModel;
+
+      if (savedKey) {
+        keyStatusLabel.textContent = `API Key: Connected (${savedProvider})`;
+        keyStatusLabel.parentElement.classList.replace('text-slate-700', 'text-red-700');
+        keyStatusLabel.parentElement.classList.add('bg-red-50', 'border-red-200');
+      } else {
+        keyStatusLabel.textContent = 'API Key: Not Set';
+      }
+    }
+
+    btnOpenSettings.addEventListener('click', () => settingsModal.classList.remove('hidden'));
+    function closeSettings() { settingsModal.classList.add('hidden'); }
+    btnCloseSettings.addEventListener('click', closeSettings);
+    btnCancelSettings.addEventListener('click', closeSettings);
+
+    btnSaveSettings.addEventListener('click', () => {
+      const key = inputApiKey.value.trim();
+      const prov = selectProvider.value;
+      const model = inputModel.value.trim();
+
+      if (key) {
+        localStorage.setItem('byok_api_key', key);
+        localStorage.setItem('byok_provider', prov);
+        localStorage.setItem('byok_model', model);
+      } else {
+        localStorage.removeItem('byok_api_key');
+      }
+      loadSettings();
+      closeSettings();
+    });
+
+    btnClearKey.addEventListener('click', () => {
+      localStorage.removeItem('byok_api_key');
+      inputApiKey.value = '';
+      loadSettings();
+      closeSettings();
+    });
+
+    function showAlert(msg) {
+      alertMessage.textContent = msg;
+      alertBanner.classList.remove('hidden');
+    }
+    btnCloseAlert.addEventListener('click', () => alertBanner.classList.add('hidden'));
+
+    // Text wrapping on 1000x1500 canvas
+    function wrapText(context, text, x, y, maxWidth, lineHeight) {
+      const words = text.split(' ');
+      let line = '';
+      let currentY = y;
+
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const metrics = context.measureText(testLine);
+        const testWidth = metrics.width;
+        if (testWidth > maxWidth && n > 0) {
+          context.fillText(line, x, currentY);
+          line = words[n] + ' ';
+          currentY += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      context.fillText(line, x, currentY);
+      return currentY + lineHeight;
+    }
+
+    // Render Pin Canvas (1000 x 1500)
+    function renderPin(index) {
+      const canvas = document.getElementById(`pin-canvas-${index}`);
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const pin = currentPins[index];
+      const palette = palettes[selectPalette.value] || palettes.crimson;
+
+      const width = 1000;
+      const height = 1500;
+
+      // 1. Background Gradient
+      const grad = ctx.createLinearGradient(0, 0, width, height);
+      grad.addColorStop(0, palette.bgStart);
+      grad.addColorStop(0.4, palette.bgMid);
+      grad.addColorStop(1, palette.bgEnd);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
+
+      // Subtle atmospheric circular glow
+      const radial = ctx.createRadialGradient(width / 2, 400, 50, width / 2, 400, 700);
+      radial.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
+      radial.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = radial;
+      ctx.fillRect(0, 0, width, height);
+
+      // 2. Category Pill Badge (Top Left)
+      const tag = inputTag.value.trim() || pin.pill || 'FEATURED GUIDE';
+      ctx.font = '800 24px "Plus Jakarta Sans", sans-serif';
+      const tagMetrics = ctx.measureText(tag);
+      const tagWidth = tagMetrics.width + 48;
+
+      ctx.fillStyle = palette.accent;
+      ctx.beginPath();
+      ctx.roundRect(80, 100, tagWidth, 54, 27);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(tag, 104, 136);
+
+      // 3. Main Bold Headline
+      ctx.font = '900 68px "Plus Jakarta Sans", sans-serif';
+      ctx.fillStyle = '#ffffff';
+      const endY = wrapText(ctx, pin.headline, 80, 480, width - 160, 84);
+
+      // Accent Divider Bar
+      ctx.fillStyle = palette.accent;
+      ctx.fillRect(80, endY + 20, 140, 8);
+
+      // 4. Supporting Subtext
+      ctx.font = '500 36px "Plus Jakarta Sans", sans-serif';
+      ctx.fillStyle = '#cbd5e1';
+      wrapText(ctx, pin.subtext, 80, endY + 70, width - 160, 52);
+
+      // 5. Website Domain Badge (Bottom Pill)
+      const domain = inputDomain.value.trim() || 'yourwebsite.com';
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.roundRect(80, height - 160, width - 160, 80, 40);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.font = '700 32px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#ffffff';
+      ctx.textAlign = 'center';
+      ctx.fillText(domain, width / 2, height - 110);
+      ctx.textAlign = 'left';
+
+      // Sync inline edit field
+      const editInput = document.getElementById(`edit-headline-${index}`);
+      if (editInput && editInput !== document.activeElement) {
+        editInput.value = pin.headline;
+      }
+    }
+
+    function renderAllPins() {
+      for (let i = 0; i < 3; i++) {
+        renderPin(i);
+      }
+    }
+
+    // Inline Headline Edit Listeners
+    for (let i = 0; i < 3; i++) {
+      const editInput = document.getElementById(`edit-headline-${i}`);
+      editInput.addEventListener('input', (e) => {
+        currentPins[i].headline = e.target.value;
+        renderPin(i);
+      });
+    }
+
+    inputDomain.addEventListener('input', renderAllPins);
+    inputTag.addEventListener('input', renderAllPins);
+    selectPalette.addEventListener('change', renderAllPins);
+
+    // Single Pin Download
+    document.querySelectorAll('.btn-download-single').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const idx = parseInt(btn.dataset.pin, 10);
+        const canvas = document.getElementById(`pin-canvas-${idx}`);
+        if (!canvas) return;
+
+        const a = document.createElement('a');
+        a.download = `pinterest-pin-angle-${idx + 1}.png`;
+        a.href = canvas.toDataURL('image/png');
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      });
+    });
+
+    // Download All 3 Pins as ZIP
+    btnDownloadAllZip.addEventListener('click', async () => {
+      const zip = new JSZip();
+
+      for (let i = 0; i < 3; i++) {
+        const canvas = document.getElementById(`pin-canvas-${i}`);
+        const dataUrl = canvas.toDataURL('image/png');
+        const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '');
+        zip.file(`pinterest_pin_${i + 1}_${currentPins[i].angle.toLowerCase()}.png`, base64Data, { base64: true });
+      }
+
+      const content = await zip.generateAsync({ type: 'blob' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(content);
+      a.download = 'pinterest-pin-batch.zip';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    });
+
+    // Demo Mode Loader
+    btnDemoMode.addEventListener('click', () => {
+      currentPins = JSON.parse(JSON.stringify(defaultPins));
+      renderAllPins();
+      showAlert('Loaded pre-built 3-angle Pinterest pin batch!');
+    });
+
+    // AI Generation via Direct In-Browser Fetch (BYOK)
+    btnGenerateAi.addEventListener('click', async () => {
+      const content = inputContent.value.trim();
+      if (!content) {
+        showAlert('Please enter a blog post title, URL, or product summary first.');
+        return;
+      }
+
+      const apiKey = localStorage.getItem('byok_api_key');
+      if (!apiKey) {
+        showAlert('No API Key detected. Please click "API Key: Not Set" to enter your key, or use "Try Demo" to preview.');
+        settingsModal.classList.remove('hidden');
+        return;
+      }
+
+      const provider = localStorage.getItem('byok_provider') || 'gemini';
+      const model = localStorage.getItem('byok_model') || (provider === 'gemini' ? 'gemini-2.5-flash' : 'gpt-4o-mini');
+
+      labelGenerate.textContent = 'Generating 3 Pin Angles...';
+      btnGenerateAi.disabled = true;
+
+      const systemPrompt = `You are a viral Pinterest content strategist.
+Given this topic: "${content}", generate three high-CTR vertical pin variations.
+Pin 1 must be Curiosity/Intrigue.
+Pin 2 must be a Listicle/Numbered guide.
+Pin 3 must be a Direct Benefit/Transformation.
+
+Return ONLY a valid JSON array of 3 objects with this exact schema:
+[
+  {
+    "angle": "Curiosity",
+    "pill": "QUICK CATEGORY TAG",
+    "headline": "Punchy Hook Headline (max 9 words)",
+    "subtext": "Compelling subtext under 15 words"
+  }
+]
+Return zero extra text outside the JSON.`;
+
+      try {
+        let jsonResponseText = '';
+
+        if (provider === 'gemini') {
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: [{ parts: [{ text: systemPrompt }] }],
+              generationConfig: { responseMimeType: 'application/json' }
+            })
+          });
+
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error?.message || `Gemini returned status ${res.status}`);
+          }
+
+          const data = await res.json();
+          jsonResponseText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        } else {
+          const url = `https://api.openai.com/v1/chat/completions`;
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+              model: model,
+              messages: [{ role: 'user', content: systemPrompt }],
+              response_format: { type: 'json_object' }
+            })
+          });
+
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error?.message || `OpenAI returned status ${res.status}`);
+          }
+
+          const data = await res.json();
+          jsonResponseText = data.choices?.[0]?.message?.content;
+        }
+
+        let parsed = JSON.parse(jsonResponseText);
+        if (!Array.isArray(parsed) && parsed.pins) parsed = parsed.pins;
+
+        if (Array.isArray(parsed) && parsed.length >= 3) {
+          currentPins = parsed.slice(0, 3);
+          renderAllPins();
+          showAlert(`Successfully generated 3 pin designs with ${model}!`);
+        } else {
+          throw new Error('AI returned an unexpected array structure.');
+        }
+
+      } catch (err) {
+        console.error(err);
+        showAlert(`Generation failed: ${err.message}`);
+      } finally {
+        labelGenerate.textContent = 'Generate 3 Pin Batch';
+        btnGenerateAi.disabled = false;
+      }
+    });
+
+    // Initialization
+    loadSettings();
+    renderAllPins();
+  </script>
+</body>
+</html>
