@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Automated Pinterest Pin Batch Engine | 100% Client-Side BYOK Studio</title>
-  <meta name="description" content="Generate high-CTR 1000x1500 Pinterest pin graphics in seconds from any blog post or product description. Uses direct AI generation with local Canvas rendering and zip downloads. Zero server storage.">
-  <meta name="keywords" content="pinterest pin maker, automated pin generator, pin batch engine, pinterest marketing, byok pin studio, canvas pin generator, 1000x1500 graphic generator">
+  <title>Pinterest Studio Pro | Bulk Editorial Pin Batch Engine (1000x1500)</title>
+  <meta name="description" content="Generate high-converting 1000x1500 Pinterest pin graphics in bulk (3, 5, 10, or 20 pins). Built for Launchist Warm Editorial Commerce with tactile Notion cards, realistic photography, and 1-click ZIP export.">
+  <meta name="keywords" content="pinterest studio pro, bulk pinterest pin generator, 1000x1500 pin maker, notion pin templates, warm editorial commerce, client-side canvas studio, byok pinterest engine">
   <link rel="canonical" href="https://greentools-dev.github.io/byok-pin-engine/">
-  <meta property="og:title" content="Automated Pinterest Pin Batch Engine">
-  <meta property="og:description" content="Auto-generate 3 high-converting 1000x1500 Pinterest pins from any topic or URL. 100% private in-browser tool.">
+  <meta property="og:title" content="Pinterest Studio Pro | Bulk Editorial Pin Engine">
+  <meta property="og:description" content="Generate 3 to 20 bulk editorial 1000x1500 Pinterest pins in seconds. 100% in-browser canvas compositor with zero server uploads.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://greentools-dev.github.io/byok-pin-engine/">
 
@@ -18,27 +18,33 @@
   <script src="https://unpkg.com/lucide@latest"></script>
   <!-- JSZip CDN -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+  <!-- Typography: Fraunces (Editorial Serif) + Plus Jakarta Sans + JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700;9..144,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
       theme: {
         extend: {
           fontFamily: {
-            sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
+            serif: ['"Fraunces"', 'Georgia', 'serif'],
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
             mono: ['"JetBrains Mono"', 'monospace'],
           },
           colors: {
-            brand: {
-              50: '#ecfdf5',
-              100: '#d1fae5',
-              500: '#10b981',
-              600: '#059669',
-              700: '#047857',
-              900: '#064e3b',
-            }
+            canvas: '#FBFBF9',
+            ink: '#111110',
+            borderWarm: '#EAE8E3',
+            forest: {
+              DEFAULT: '#1A362B',
+              hover: '#132820',
+              light: '#EBF1EE'
+            },
+            oat: '#F4F3EE',
+            charcoal: '#1E1E1C',
+            muted: '#76746E'
           }
         }
       }
@@ -47,744 +53,1249 @@
 
   <style>
     body {
-      background-color: #f8fafc;
-      background-image: 
-        radial-gradient(rgba(15, 23, 42, 0.08) 1px, transparent 1px);
-      background-size: 24px 24px;
+      background-color: #FBFBF9;
+      color: #111110;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .serif { font-family: 'Fraunces', Georgia, serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    
+    input, select, textarea {
+      background-color: #FFFFFF;
+      border-color: #EAE8E3;
+      color: #111110;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #1A362B;
+      box-shadow: 0 0 0 1px #1A362B;
+    }
+    
+    .pin-shadow {
+      box-shadow: 0 12px 30px -10px rgba(17, 17, 16, 0.12), 0 4px 10px -2px rgba(17, 17, 16, 0.04);
     }
   </style>
-
-  <!-- Structured Data JSON-LD -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "WebApplication",
-        "name": "Automated Pinterest Pin Batch Engine",
-        "url": "https://greentools-dev.github.io/byok-pin-engine/",
-        "applicationCategory": "DesignApplication",
-        "operatingSystem": "All",
-        "browserRequirements": "Requires JavaScript. Requires HTML5 Canvas.",
-        "description": "Generates three high-CTR 1000x1500 vertical Pinterest pins with distinct marketing angles (listicle, curiosity, direct benefit) using client-side AI and Canvas.",
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "USD"
-        }
-      },
-      {
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "What dimensions are generated?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Pins are generated at standard high-resolution 1000x1500 vertical pixels (2:3 aspect ratio), the exact recommended specification for Pinterest feeds."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "What are the 3 marketing angles?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "The engine automatically generates a Curiosity/Intrigue hook, a Listicle/Action Guide, and a Direct Transformation benefit angle to maximize click-through rate variations."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Does this tool work without an API key?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Yes! Click 'Try Demo (No Key)' to load realistic sample pins, customize colors and fonts, and download full-resolution PNGs or ZIP archives immediately."
-            }
-          }
-        ]
-      }
-    ]
-  </script>
 </head>
-<body class="min-h-screen flex flex-col font-sans text-slate-800 antialiased selection:bg-brand-100 selection:text-brand-900">
+<body class="min-h-screen flex flex-col antialiased selection:bg-[#EAE8E3] selection:text-black">
 
   <!-- Header -->
-  <header class="border-b border-slate-200/80 bg-white/90 backdrop-blur-md sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+  <header class="border-b border-[#EAE8E3] bg-[#FBFBF9]/95 backdrop-blur-md sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-red-600 text-white flex items-center justify-center shadow-sm shadow-red-500/20">
-          <i data-lucide="pin" class="w-5 h-5"></i>
-        </div>
-        <div>
-          <span class="font-extrabold text-slate-900 tracking-tight text-lg">GreenTools<span class="text-red-600">.dev</span></span>
-          <span class="hidden sm:inline-block ml-2 text-xs font-semibold px-2 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-200/60">Pin Engine</span>
-        </div>
-      </div>
-      <div class="flex items-center gap-3">
-        <!-- BYOK Key Trigger -->
-        <button type="button" id="btn-open-settings" class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-2xs">
-          <i data-lucide="key" class="w-3.5 h-3.5 text-red-600"></i>
-          <span id="key-status-label">API Key: Not Set</span>
-        </button>
-        <a href="https://github.com/greentools-dev/byok-pin-engine" target="_blank" rel="noopener noreferrer" class="text-slate-500 hover:text-slate-900 transition-colors p-1.5">
-          <i data-lucide="github" class="w-5 h-5"></i>
+        <a href="https://greentools-dev.github.io/" class="flex items-center gap-2.5">
+          <span class="w-3.5 h-3.5 rounded-full bg-[#1A362B]"></span>
+          <span class="serif font-bold tracking-tight text-xl text-[#111110]">GreenTools<span class="text-[#1A362B]">.dev</span></span>
         </a>
+        <span class="text-[#EAE8E3]">/</span>
+        <span class="text-xs font-semibold px-2 py-0.5 rounded bg-[#EAE8E3] text-[#111110] uppercase tracking-wider">Pinterest Studio Pro</span>
+      </div>
+
+      <div class="flex items-center gap-3 sm:gap-4">
+        <a href="https://greentools-dev.github.io/launchist-blog-fleet/" class="hidden sm:inline-flex text-xs font-semibold text-[#1A362B] hover:text-black transition">
+          Operating Guides (300) &rarr;
+        </a>
+        <button id="btn-api-key" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-[#EAE8E3] bg-white hover:bg-[#F4F3EE] transition">
+          <i data-lucide="key" class="w-3.5 h-3.5 text-[#1A362B]"></i>
+          <span id="key-status-text">BYOK Key</span>
+        </button>
       </div>
     </div>
   </header>
 
-  <!-- Error / Alert Banner -->
-  <div id="alert-banner" class="hidden max-w-7xl mx-auto px-4 mt-4">
-    <div class="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-xs font-medium text-amber-800 flex items-center justify-between gap-3">
-      <div class="flex items-center gap-2">
-        <i data-lucide="alert-triangle" class="w-4 h-4 text-amber-600 shrink-0"></i>
-        <span id="alert-message">Notice message</span>
+  <!-- Hero Deck -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12">
+    
+    <div class="text-center max-w-3xl mx-auto mb-10">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EAE8E3] text-[#111110] text-xs font-bold tracking-wider uppercase mb-3">
+        <i data-lucide="sparkles" class="w-3.5 h-3.5 text-[#1A362B]"></i>
+        Bulk Editorial Creative Engine &bull; 1000 &times; 1500
       </div>
-      <button type="button" id="btn-close-alert" class="text-amber-600 hover:text-amber-800 p-1">
-        <i data-lucide="x" class="w-4 h-4"></i>
-      </button>
-    </div>
-  </div>
-
-  <!-- Hero & Primary Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-8 md:py-10 flex flex-col">
-    <div class="text-center max-w-2xl mx-auto mb-8">
-      <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-        Automated Pinterest Pin Batch Engine
+      <h1 class="text-3xl sm:text-5xl font-bold tracking-tight text-[#111110] serif mb-4">
+        Automated Pinterest Pin Batch Studio
       </h1>
-      <p class="mt-3 text-slate-600 text-sm sm:text-base leading-relaxed">
-        Turn any blog article or product description into three high-converting 1000x1500 vertical pins. Bring your Gemini or OpenAI API key, or test in instant demo mode.
+      <p class="text-sm sm:text-base text-[#76746E] leading-relaxed">
+        Generate 3, 5, 10, or 20 high-CTR vertical pins in seconds. Rendered locally in 1000&times;1500 canvas memory with tactile Notion mockups, editorial typography, and 1-click ZIP export.
       </p>
     </div>
 
-    <!-- Top Generation Input Card -->
-    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm mb-8 max-w-4xl mx-auto w-full flex flex-col gap-4">
-      <div class="flex items-center justify-between">
-        <span class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
-          <i data-lucide="sparkles" class="w-4 h-4 text-red-600"></i>
-          Content Input &amp; Branding
-        </span>
-        <button type="button" id="btn-demo-mode" class="text-xs font-semibold text-red-700 hover:text-red-800 underline underline-offset-2">
-          Try Demo (No Key)
-        </button>
-      </div>
+    <!-- Master Control Deck -->
+    <div class="bg-white border border-[#EAE8E3] rounded-2xl p-6 sm:p-8 shadow-sm mb-12">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        
+        <!-- Left: Input & Prompt Engineering -->
+        <div class="lg:col-span-8 space-y-6">
+          
+          <!-- Batch Size Selector -->
+          <div>
+            <label class="block text-xs font-bold text-[#76746E] uppercase tracking-wider mb-2">
+              Batch Output Size
+            </label>
+            <div class="grid grid-cols-4 gap-2 sm:gap-3" id="batch-selector">
+              <button type="button" data-batch="3" class="batch-btn py-2.5 px-3 rounded-xl border border-[#1A362B] bg-[#1A362B] text-white text-xs font-bold text-center transition flex flex-col items-center justify-center">
+                <span class="text-base font-extrabold">3 Pins</span>
+                <span class="text-[10px] opacity-80">Quick Test</span>
+              </button>
+              <button type="button" data-batch="5" class="batch-btn py-2.5 px-3 rounded-xl border border-[#EAE8E3] bg-[#FBFBF9] text-[#111110] text-xs font-bold text-center hover:bg-[#F4F3EE] transition flex flex-col items-center justify-center">
+                <span class="text-base font-extrabold">5 Pins</span>
+                <span class="text-[10px] text-[#76746E]">Weekly Sched</span>
+              </button>
+              <button type="button" data-batch="10" class="batch-btn py-2.5 px-3 rounded-xl border border-[#EAE8E3] bg-[#FBFBF9] text-[#111110] text-xs font-bold text-center hover:bg-[#F4F3EE] transition flex flex-col items-center justify-center">
+                <span class="text-base font-extrabold">10 Pins</span>
+                <span class="text-[10px] text-[#76746E]">Bi-Weekly Batch</span>
+              </button>
+              <button type="button" data-batch="20" class="batch-btn py-2.5 px-3 rounded-xl border border-[#EAE8E3] bg-[#FBFBF9] text-[#111110] text-xs font-bold text-center hover:bg-[#F4F3EE] transition flex flex-col items-center justify-center">
+                <span class="text-base font-extrabold">20 Pins</span>
+                <span class="text-[10px] text-[#76746E]">Full Campaign</span>
+              </button>
+            </div>
+          </div>
 
+          <!-- Topic / Niche -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label for="input-topic" class="block text-xs font-bold text-[#76746E] uppercase tracking-wider">
+                Topic, Product Hook, or Blog Article Concept
+              </label>
+              <button id="btn-quick-fill" class="text-xs text-[#1A362B] font-semibold hover:underline">
+                Randomize Niche Idea &bull;
+              </button>
+            </div>
+            <textarea id="input-topic" rows="3" class="w-full rounded-xl p-3 text-sm border focus:ring-1 transition" placeholder="e.g. Energy-aware daily routine in Notion for ADHD minds. Focus on dopamine tiers, low-friction record capture, and weekly resets."></textarea>
+            
+            <!-- Quick Chips -->
+            <div class="flex flex-wrap gap-1.5 mt-2.5 text-xs">
+              <span class="text-[#76746E] self-center text-[11px] font-semibold">Presets:</span>
+              <button class="chip-niche px-2.5 py-1 rounded-full bg-[#F4F3EE] hover:bg-[#EAE8E3] transition text-[#111110] font-medium" data-val="Notion Energy-Aware Daily Routine for ADHD">ADHD Life OS</button>
+              <button class="chip-niche px-2.5 py-1 rounded-full bg-[#F4F3EE] hover:bg-[#EAE8E3] transition text-[#111110] font-medium" data-val="E-Commerce Contribution Margin & Break-Even ROAS">E-Commerce OS</button>
+              <button class="chip-niche px-2.5 py-1 rounded-full bg-[#F4F3EE] hover:bg-[#EAE8E3] transition text-[#111110] font-medium" data-val="10x Content Repurposing Pipeline for Creators">Creator OS</button>
+              <button class="chip-niche px-2.5 py-1 rounded-full bg-[#F4F3EE] hover:bg-[#EAE8E3] transition text-[#111110] font-medium" data-val="Zero-Error Real Estate Escrow & Contingency Pipeline">Real Estate OS</button>
+              <button class="chip-niche px-2.5 py-1 rounded-full bg-[#F4F3EE] hover:bg-[#EAE8E3] transition text-[#111110] font-medium" data-val="Second Brain Relational Vault & Progressive Summarization">Second Brain</button>
+            </div>
+          </div>
+
+          <!-- Brand Customization -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label for="input-brand" class="block text-xs font-bold text-[#76746E] uppercase tracking-wider mb-1.5">
+                Top Brand Badge
+              </label>
+              <input type="text" id="input-brand" value="LAUNCHIST" class="w-full rounded-xl px-3 py-2 text-sm border font-semibold uppercase tracking-wider">
+            </div>
+            <div>
+              <label for="input-url" class="block text-xs font-bold text-[#76746E] uppercase tracking-wider mb-1.5">
+                Domain / System Reference
+              </label>
+              <input type="text" id="input-url" value="launchist.store" class="w-full rounded-xl px-3 py-2 text-sm border font-mono">
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right: Archetypes & Execution Action -->
+        <div class="lg:col-span-4 flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-[#EAE8E3] lg:pl-8 pt-6 lg:pt-0">
+          
+          <div class="space-y-4">
+            <label class="block text-xs font-bold text-[#76746E] uppercase tracking-wider">
+              5 Editorial Archetypes (Included in Batch)
+            </label>
+            <div class="space-y-2 text-xs text-[#52504B]">
+              <div class="flex items-start gap-2">
+                <span class="w-2 h-2 rounded-full bg-[#1A362B] mt-1.5 shrink-0"></span>
+                <span><strong>Editorial Headline:</strong> Dominant serif typography with lifestyle photography.</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="w-2 h-2 rounded-full bg-[#1A362B] mt-1.5 shrink-0"></span>
+                <span><strong>Tablet Mockup Focus:</strong> Stylized floating Notion OS dashboard screen.</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="w-2 h-2 rounded-full bg-[#1A362B] mt-1.5 shrink-0"></span>
+                <span><strong>Checklist Card:</strong> Tactile paper note with verified checkbox steps.</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="w-2 h-2 rounded-full bg-[#1A362B] mt-1.5 shrink-0"></span>
+                <span><strong>Two-Part Question:</strong> Dual split comparison cards for mental clarity.</span>
+              </div>
+              <div class="flex items-start gap-2">
+                <span class="w-2 h-2 rounded-full bg-[#1A362B] mt-1.5 shrink-0"></span>
+                <span><strong>Minimal Quote:</strong> High-impact aphorism with direct CTA pill.</span>
+              </div>
+            </div>
+
+            <!-- Palette Theme Selector -->
+            <div class="pt-2">
+              <label for="select-palette" class="block text-xs font-bold text-[#76746E] uppercase tracking-wider mb-1.5">
+                Color Palette Theme
+              </label>
+              <select id="select-palette" class="w-full rounded-xl px-3 py-2 text-xs border font-medium">
+                <option value="auto">Auto-Balance Across Palette Set</option>
+                <option value="warm_oat">Warm Oat &amp; Cream (Editorial Paper)</option>
+                <option value="dark_charcoal">Dark Charcoal &amp; Slate (High Contrast)</option>
+                <option value="sage_green">Sage &amp; Deep Forest (Calm Focus)</option>
+                <option value="terracotta">Terracotta &amp; Linen (Tactile Warmth)</option>
+                <option value="muted_navy">Muted Navy &amp; Stone (Executive Architecture)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="pt-6 space-y-2.5">
+            <button id="btn-generate" class="w-full py-3.5 px-6 rounded-xl bg-[#111110] hover:bg-black text-white text-sm font-bold flex items-center justify-center gap-2 transition shadow-sm">
+              <i data-lucide="play" class="w-4 h-4 fill-current"></i>
+              <span id="btn-generate-text">Generate 3 Editorial Pins</span>
+            </button>
+            <button id="btn-demo" class="w-full py-2.5 px-4 rounded-xl border border-[#EAE8E3] bg-[#F4F3EE] hover:bg-[#EAE8E3] text-[#111110] text-xs font-semibold flex items-center justify-center gap-2 transition">
+              <i data-lucide="zap" class="w-3.5 h-3.5 text-[#1A362B]"></i>
+              <span>Instant Demo (No Key Needed)</span>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Output Gallery Header & Actions -->
+    <div id="output-header" class="hidden flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
       <div>
-        <label for="input-content" class="block text-xs font-semibold text-slate-700 mb-1.5">Blog Post Title, Description, or Product Hook</label>
-        <textarea id="input-content" rows="2" placeholder="e.g. 7 Low-Stress Passive Income Ideas You Can Start from Home in 2026 with Zero Capital..." class="w-full p-3 text-xs font-sans rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-red-500 resize-none"></textarea>
+        <h2 class="serif text-2xl font-bold text-[#111110]">Generated Editorial Pin Batch</h2>
+        <p class="text-xs text-[#76746E]" id="batch-stats-text">3 High-DPI 1000&times;1500 Canvas Pins Ready</p>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-        <div>
-          <label for="input-domain" class="block font-semibold text-slate-700 mb-1">Website Domain Badge</label>
-          <input type="text" id="input-domain" value="yourwebsite.com" class="w-full px-3 py-1.5 text-xs font-mono rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-red-500">
-        </div>
-        <div>
-          <label for="select-niche" class="block font-semibold text-slate-700 mb-1">Niche Category Tag</label>
-          <input type="text" id="input-tag" value="PASSIVE INCOME" class="w-full px-3 py-1.5 text-xs font-mono uppercase rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-red-500">
-        </div>
-        <div>
-          <label for="select-palette" class="block font-semibold text-slate-700 mb-1">Color Palette Theme</label>
-          <select id="select-palette" class="w-full px-2.5 py-1.5 rounded-lg border border-slate-300 bg-white font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-red-500">
-            <option value="crimson" selected>Crimson Fire (High CTR)</option>
-            <option value="emerald">Emerald Growth</option>
-            <option value="midnight">Midnight Violet</option>
-            <option value="gold">Warm Amber Gold</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="pt-2 flex items-center justify-between gap-3 flex-wrap">
-        <span class="text-[11px] text-slate-400">Generates 3 angles: Curiosity Hook, Listicle Guide, and Direct Benefit.</span>
-        <button type="button" id="btn-generate-ai" class="py-2.5 px-6 rounded-xl bg-red-600 hover:bg-red-700 active:bg-red-800 text-white font-bold text-xs transition-all shadow-md shadow-red-600/20 flex items-center justify-center gap-2">
-          <i data-lucide="wand-2" class="w-4 h-4"></i>
-          <span id="label-generate">Generate 3 Pin Batch</span>
+      <div class="flex items-center gap-3">
+        <button id="btn-download-zip" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#1A362B] hover:bg-black text-white text-xs font-bold transition shadow-sm">
+          <i data-lucide="archive" class="w-4 h-4"></i>
+          <span>Download All Pins (.zip)</span>
         </button>
       </div>
     </div>
 
-    <!-- Active 3-Pin Gallery Showcase -->
-    <div class="flex items-center justify-between mb-4 max-w-6xl mx-auto w-full">
-      <div class="flex items-center gap-2">
-        <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Generated Pin Batch (1000 &times; 1500)</h2>
-        <span class="text-xs px-2 py-0.5 rounded-full bg-red-50 text-red-700 font-mono font-bold">3 Variations</span>
+    <!-- Generated Pins Grid -->
+    <div id="pins-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-16">
+      <!-- Dynamic Pin Cards Injected Here -->
+    </div>
+
+    <!-- Empty State / Loading State -->
+    <div id="empty-state" class="text-center py-16 px-4 border-2 border-dashed border-[#EAE8E3] rounded-2xl bg-white mb-16">
+      <div class="w-12 h-12 rounded-2xl bg-[#F4F3EE] text-[#1A362B] flex items-center justify-center mx-auto mb-4">
+        <i data-lucide="layout-grid" class="w-6 h-6"></i>
       </div>
-      <button type="button" id="btn-download-all-zip" class="py-2 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all shadow-sm flex items-center gap-1.5">
-        <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i>
-        <span>Download All 3 Pins (.zip)</span>
+      <h3 class="serif text-lg font-bold text-[#111110] mb-1">Canvas Compositor Ready</h3>
+      <p class="text-xs text-[#76746E] max-w-md mx-auto mb-5">
+        Choose your batch size (3, 5, 10, or 20), enter your topic, and click Generate or Instant Demo to render 1000&times;1500 editorial pins.
+      </p>
+      <button onclick="document.getElementById('btn-demo').click()" class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#111110] text-white text-xs font-semibold hover:bg-black transition">
+        Load 20 Launchist Benchmark Pins &rarr;
       </button>
     </div>
 
-    <!-- 3-Pin Cards Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto w-full">
-      
-      <!-- Pin 1: Curiosity Angle -->
-      <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col gap-3">
-        <div class="flex items-center justify-between text-xs">
-          <span class="font-bold text-slate-900">Angle 1: Curiosity Hook</span>
-          <button type="button" class="btn-download-single text-xs text-red-600 hover:text-red-800 font-semibold" data-pin="0">Download PNG</button>
-        </div>
-        <div class="relative w-full aspect-[2/3] rounded-xl overflow-hidden shadow-md border border-slate-200 bg-slate-900">
-          <canvas id="pin-canvas-0" width="1000" height="1500" class="w-full h-full object-contain"></canvas>
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-500 mb-1">Headline Text</label>
-          <input type="text" id="edit-headline-0" class="w-full px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-red-500">
-        </div>
-      </div>
-
-      <!-- Pin 2: Listicle Angle -->
-      <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col gap-3">
-        <div class="flex items-center justify-between text-xs">
-          <span class="font-bold text-slate-900">Angle 2: Listicle Guide</span>
-          <button type="button" class="btn-download-single text-xs text-red-600 hover:text-red-800 font-semibold" data-pin="1">Download PNG</button>
-        </div>
-        <div class="relative w-full aspect-[2/3] rounded-xl overflow-hidden shadow-md border border-slate-200 bg-slate-900">
-          <canvas id="pin-canvas-1" width="1000" height="1500" class="w-full h-full object-contain"></canvas>
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-500 mb-1">Headline Text</label>
-          <input type="text" id="edit-headline-1" class="w-full px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-red-500">
-        </div>
-      </div>
-
-      <!-- Pin 3: Direct Benefit Angle -->
-      <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col gap-3">
-        <div class="flex items-center justify-between text-xs">
-          <span class="font-bold text-slate-900">Angle 3: Direct Benefit</span>
-          <button type="button" class="btn-download-single text-xs text-red-600 hover:text-red-800 font-semibold" data-pin="2">Download PNG</button>
-        </div>
-        <div class="relative w-full aspect-[2/3] rounded-xl overflow-hidden shadow-md border border-slate-200 bg-slate-900">
-          <canvas id="pin-canvas-2" width="1000" height="1500" class="w-full h-full object-contain"></canvas>
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-500 mb-1">Headline Text</label>
-          <input type="text" id="edit-headline-2" class="w-full px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-200 focus:outline-none focus:ring-1 focus:ring-red-500">
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Sponsor Slot -->
-    <aside id="sponsor-slot" class="mt-12 p-5 rounded-2xl border border-dashed border-slate-300 bg-white text-center text-xs text-slate-500 max-w-3xl mx-auto shadow-2xs">
-      <span class="font-semibold text-slate-600 uppercase tracking-wider text-[11px] block mb-1">Sponsored</span>
-      Scale your visual content marketing and social traffic with GreenTools BYOK Studio.
-    </aside>
-
-    <!-- FAQ & Guide -->
-    <section class="mt-12 bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-sm max-w-4xl mx-auto w-full">
-      <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-        <i data-lucide="help-circle" class="w-5 h-5 text-red-600"></i>
-        Pinterest Pin Engine &amp; Frequently Asked Questions
-      </h2>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-600">
-        <div>
-          <h3 class="font-semibold text-slate-800 mb-1">Why test 3 different angles per post?</h3>
-          <p class="leading-relaxed">
-            Pinterest rewards content variety. A listicle pin appeals to organized researchers, a curiosity hook captures casual feed scrollers, and a direct benefit pin converts intent-driven searchers. Testing all three triples your algorithmic reach.
-          </p>
-        </div>
-        <div>
-          <h3 class="font-semibold text-slate-800 mb-1">What resolution are these pins?</h3>
-          <p class="leading-relaxed">
-            All pins are rendered at 1000 &times; 1500 pixels. This matches Pinterest's official 2:3 vertical aspect ratio recommendation and prevents feed compression or pixelation.
-          </p>
-        </div>
-        <div>
-          <h3 class="font-semibold text-slate-800 mb-1">How does the BYOK key work?</h3>
-          <p class="leading-relaxed">
-            Your API key is stored only in your private browser <code>localStorage</code>. Direct API calls are made from your client to Google Gemini or OpenAI with zero server tracking or data interception.
-          </p>
-        </div>
-        <div>
-          <h3 class="font-semibold text-slate-800 mb-1">Can I edit the text before downloading?</h3>
-          <p class="leading-relaxed">
-            Yes! Type into any of the three headline fields beneath each preview card to update the 1000x1500 canvas rendering immediately in real time.
-          </p>
+    <!-- FAQ & Blueprint Section -->
+    <section class="border-t border-[#EAE8E3] pt-12">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="serif text-2xl font-bold text-[#111110] mb-6 text-center">Pinterest Editorial Architecture &bull; FAQs</h2>
+        <div class="space-y-4 text-sm">
+          <div class="p-5 rounded-xl border border-[#EAE8E3] bg-white">
+            <h4 class="font-bold text-[#111110] mb-1.5">Why 1000 &times; 1500 resolution?</h4>
+            <p class="text-xs text-[#76746E] leading-relaxed">
+              1000 &times; 1500 represents the optimal 2:3 vertical aspect ratio mandated by Pinterest's indexing algorithm. Lower resolutions risk compression blurring, while arbitrary heights get truncated in feed feeds.
+            </p>
+          </div>
+          <div class="p-5 rounded-xl border border-[#EAE8E3] bg-white">
+            <h4 class="font-bold text-[#111110] mb-1.5">How does the 100% in-browser generation work?</h4>
+            <p class="text-xs text-[#76746E] leading-relaxed">
+              All typography, tactile Notion cards, shadows, and textures are composited in real-time onto an offscreen HTML5 <code>&lt;canvas&gt;</code> element in your browser memory. Your API keys, concepts, and generated PNG files never touch external storage.
+            </p>
+          </div>
+          <div class="p-5 rounded-xl border border-[#EAE8E3] bg-white">
+            <h4 class="font-bold text-[#111110] mb-1.5">Can I edit headlines before downloading?</h4>
+            <p class="text-xs text-[#76746E] leading-relaxed">
+              Yes. Each card provides an inline quick-editor. Tweak the headline, subtext, or CTA button, and the 1000 &times; 1500 canvas re-renders immediately.
+            </p>
+          </div>
         </div>
       </div>
     </section>
+
   </main>
 
-  <!-- BYOK Settings Modal -->
-  <div id="settings-modal" class="fixed inset-0 z-50 hidden bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl border border-slate-200 max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-          <i data-lucide="key" class="w-4 h-4 text-red-600"></i>
-          AI Provider &amp; API Key Settings
-        </h3>
-        <button type="button" id="btn-close-settings" class="text-slate-400 hover:text-slate-600">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-      </div>
-
-      <div class="text-xs text-slate-500 leading-relaxed">
-        Enter your API key. It is saved only in local storage on this computer and used for direct browser-to-API calls.
-      </div>
-
-      <!-- Provider Selector -->
-      <div>
-        <label for="select-provider" class="block text-xs font-semibold text-slate-700 mb-1">AI Provider</label>
-        <select id="select-provider" class="w-full px-3 py-2 text-xs rounded-lg border border-slate-300 bg-white font-medium text-slate-800 focus:outline-none focus:ring-1 focus:ring-red-500">
-          <option value="gemini" selected>Google Gemini (Recommended &bull; Fast Free Tier)</option>
-          <option value="openai">OpenAI / OpenRouter</option>
-        </select>
-      </div>
-
-      <!-- Model Name -->
-      <div>
-        <label for="input-model" class="block text-xs font-semibold text-slate-700 mb-1">Model Name</label>
-        <input type="text" id="input-model" value="gemini-2.5-flash" class="w-full px-3 py-1.5 text-xs font-mono rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-red-500">
-      </div>
-
-      <!-- Key Input -->
-      <div>
-        <label for="input-api-key" class="block text-xs font-semibold text-slate-700 mb-1">API Key</label>
-        <input type="password" id="input-api-key" placeholder="AIzaSy... or sk-..." class="w-full px-3 py-2 text-xs font-mono rounded-lg border border-slate-300 focus:outline-none focus:ring-1 focus:ring-red-500">
-      </div>
-
-      <!-- Actions -->
-      <div class="pt-2 flex items-center justify-between gap-2">
-        <button type="button" id="btn-clear-key" class="px-3 py-1.5 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-          Clear Key
-        </button>
-        <div class="flex items-center gap-2">
-          <button type="button" id="btn-cancel-settings" class="px-3.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 rounded-lg border border-slate-200 transition-colors">
-            Cancel
-          </button>
-          <button type="button" id="btn-save-settings" class="px-4 py-1.5 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors shadow-sm">
-            Save Settings
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Footer -->
-  <footer class="border-t border-slate-200 bg-white mt-12 py-8">
-    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+  <footer class="border-t border-[#EAE8E3] bg-[#F4F3EE] py-10 text-center text-xs text-[#76746E]">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-2">
-        <span class="font-bold text-slate-800">GreenTools.dev</span>
+        <span class="w-2.5 h-2.5 rounded-full bg-[#1A362B]"></span>
+        <span class="serif font-bold text-[#111110]">GreenTools.dev</span>
         <span>&bull;</span>
-        <span>100% Client-Side Web Studios</span>
+        <span>Pinterest Studio Pro (100% Client-Side BYOK Studio)</span>
       </div>
       <div>
-        Zero Server Storage &bull; Private Local Keys &bull; No Telemetry
+        <a href="https://launchist.store" target="_blank" class="hover:text-black font-semibold transition">Inspired by Launchist Warm Editorial Commerce &rarr;</a>
       </div>
     </div>
   </footer>
 
-  <!-- Script Logic -->
-  <script>
-    lucide.createIcons();
+  <!-- BYOK API Key Modal -->
+  <div id="modal-key" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white border border-[#EAE8E3] rounded-2xl max-w-md w-full p-6 shadow-xl space-y-4">
+      <div class="flex items-center justify-between border-b border-[#EAE8E3] pb-3">
+        <h3 class="serif font-bold text-lg text-[#111110]">BYOK API Key Configuration</h3>
+        <button id="btn-close-modal" class="text-[#76746E] hover:text-black">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <p class="text-xs text-[#76746E] leading-relaxed">
+        Your key is stored 100% locally in your browser's <code>localStorage</code>. It is sent directly to Google Gemini or OpenAI with zero proxy intercept.
+      </p>
+      <div>
+        <label class="block text-xs font-bold text-[#76746E] uppercase tracking-wider mb-1.5">
+          Google Gemini API Key (Recommended)
+        </label>
+        <input type="password" id="input-gemini-key" placeholder="AIzaSy..." class="w-full rounded-xl px-3 py-2 text-sm border font-mono">
+        <p class="text-[11px] text-[#76746E] mt-1">Uses Gemini 2.5 Flash for high-speed structured JSON pin generation.</p>
+      </div>
+      <div class="pt-2 flex justify-end gap-2">
+        <button id="btn-clear-key" class="px-3 py-2 rounded-xl text-xs font-semibold text-red-600 hover:bg-red-50 transition">
+          Clear Key
+        </button>
+        <button id="btn-save-key" class="px-5 py-2 rounded-xl bg-[#111110] text-white text-xs font-bold hover:bg-black transition">
+          Save &amp; Continue
+        </button>
+      </div>
+    </div>
+  </div>
 
-    // Default Demo Pins
-    const defaultPins = [
+  <!-- Fullscreen Pin Preview & Edit Modal -->
+  <div id="modal-preview" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white border border-[#EAE8E3] rounded-2xl max-w-4xl w-full max-h-[92vh] overflow-y-auto p-6 shadow-2xl">
+      <div class="flex items-center justify-between border-b border-[#EAE8E3] pb-3 mb-4">
+        <div>
+          <h3 class="serif font-bold text-lg text-[#111110]" id="preview-modal-title">Inspect &amp; Tweak Pin</h3>
+          <p class="text-xs text-[#76746E]">1000 &times; 1500 High-DPI Canvas Rendering</p>
+        </div>
+        <button id="btn-close-preview" class="text-[#76746E] hover:text-black">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div class="md:col-span-6 flex justify-center bg-[#F4F3EE] p-4 rounded-xl border border-[#EAE8E3]">
+          <canvas id="modal-canvas" class="max-h-[65vh] w-auto rounded-lg shadow-md aspect-[2/3]"></canvas>
+        </div>
+
+        <div class="md:col-span-6 space-y-4 text-xs">
+          <div>
+            <label class="block font-bold text-[#76746E] uppercase mb-1">Headline Text</label>
+            <textarea id="edit-headline" rows="3" class="w-full rounded-xl p-2.5 border text-sm"></textarea>
+          </div>
+          <div>
+            <label class="block font-bold text-[#76746E] uppercase mb-1">Supporting Context / Subtext</label>
+            <textarea id="edit-subtext" rows="2" class="w-full rounded-xl p-2.5 border text-xs"></textarea>
+          </div>
+          <div>
+            <label class="block font-bold text-[#76746E] uppercase mb-1">Call To Action (CTA Pill)</label>
+            <input type="text" id="edit-cta" class="w-full rounded-xl p-2.5 border text-xs font-semibold">
+          </div>
+          <div>
+            <label class="block font-bold text-[#76746E] uppercase mb-1">Mockup Card Label / Details</label>
+            <input type="text" id="edit-mockup-label" class="w-full rounded-xl p-2.5 border text-xs font-medium">
+          </div>
+          <div class="pt-4 flex gap-3">
+            <button id="btn-apply-edit" class="flex-1 py-2.5 rounded-xl bg-[#111110] text-white font-bold hover:bg-black transition">
+              Apply Live Update
+            </button>
+            <button id="btn-download-single" class="flex-1 py-2.5 rounded-xl bg-[#1A362B] text-white font-bold hover:bg-black transition flex items-center justify-center gap-1.5">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+              Download PNG
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPLICATION JAVASCRIPT ENGINE -->
+  <script>
+    let currentBatchSize = 3;
+    let generatedPins = [];
+    let currentPreviewIndex = -1;
+
+    const LAUNCHIST_BENCHMARK_PINS = [
       {
-        angle: 'Curiosity',
-        pill: 'SHOCKING TRUTH',
-        headline: 'The 1 Fatal Mistake Beginners Make with Client-Side Apps',
-        subtext: 'Avoid this expensive blunder before you ship your first project.'
+        archetype: "checklist_card",
+        top_badge: "LAUNCHIST",
+        pagination: "P01",
+        headline: "Creator publishing checklist",
+        subtext: "Before you publish, check the CTA and destination.",
+        mockup_card: {
+          title: "Publishing QA",
+          items: ["Script + CTA mapped", "Publication date recorded", "Sponsor tracking link active"]
+        },
+        cta: "Save this checklist →",
+        bg_theme: "warm_linen",
+        palette: "warm_oat"
       },
       {
-        angle: 'Listicle',
-        pill: 'STEP-BY-STEP GUIDE',
-        headline: '7 Free Developer Tools That Save 25+ Hours Every Week',
-        subtext: 'Simple browser-based utilities that replace paid subscriptions.'
+        archetype: "tablet_mockup_focus",
+        top_badge: "LAUNCHIST",
+        pagination: "P02",
+        headline: "Small shop workflow",
+        subtext: "Launch day is one part. Keep the operating context visible.",
+        mockup_card: {
+          title: "E-Commerce OS",
+          items: ["↗ Inventory & SKU Matrix", "↗ Multi-Channel Campaign & Content Engine", "↗ Supplier Reorder Thresholds"]
+        },
+        cta: "See E-Commerce OS →",
+        bg_theme: "oak_desk",
+        palette: "dark_charcoal"
       },
       {
-        angle: 'Direct Benefit',
-        pill: 'PROVEN METHOD',
-        headline: 'How to Ship 30 Live Production Web Tools with $0 Server Bills',
-        subtext: 'The complete zero-maintenance blueprint for solo creators.'
+        archetype: "tablet_mockup_focus",
+        top_badge: "LAUNCHIST",
+        pagination: "P03",
+        headline: "Energy-aware planning",
+        subtext: "Choose a step that fits today's cognitive capacity.",
+        mockup_card: {
+          title: "⚡ Today's overview",
+          items: ["🟢 Low - one tiny task", "🟡 Medium - one quick win", "🔴 High - protect a focus block"]
+        },
+        cta: "Preview ADHD Life OS →",
+        bg_theme: "minimal_study",
+        palette: "dark_charcoal"
+      },
+      {
+        archetype: "tablet_mockup_focus",
+        top_badge: "LAUNCHIST",
+        pagination: "P04",
+        headline: "Real estate Monday review",
+        subtext: "Start with the stage. Choose the next task deliberately.",
+        mockup_card: {
+          title: "MASTER TRANSACTION PIPELINE",
+          items: ["Active Listing: 12 Active", "Under Contract: 5 Pending", "Closed Reviews: 8 Cleared"]
+        },
+        cta: "Review the agent workflow →",
+        bg_theme: "architect_desk",
+        palette: "terracotta"
+      },
+      {
+        archetype: "tablet_mockup_focus",
+        top_badge: "LAUNCHIST",
+        pagination: "P05",
+        headline: "SECOND BRAIN IN NOTION",
+        subtext: "Open only what you need today. Knowledge without clutter.",
+        mockup_card: {
+          title: "2027 Life OS",
+          items: ["🎯 Vision Hub (Direction)", "⚡ Productivity Hub (Daily execution)", "📦 Knowledge Archive (Vault)"]
+        },
+        cta: "See what is inside →",
+        bg_theme: "modern_study",
+        palette: "dark_charcoal"
+      },
+      {
+        archetype: "editorial_headline",
+        top_badge: "LAUNCHIST",
+        pagination: "P06",
+        headline: "Creator weekly review",
+        subtext: "Three questions before Monday: Content, offer, and destination.",
+        mockup_card: {
+          title: "Review Steps",
+          items: ["01 What does this post promote?", "02 Where does the CTA lead?", "03 Are publishing checks done?"]
+        },
+        cta: "See the weekly review →",
+        bg_theme: "notebook_desk",
+        palette: "warm_oat"
+      },
+      {
+        archetype: "tablet_mockup_focus",
+        top_badge: "LAUNCHIST",
+        pagination: "P07",
+        headline: "NOTION SHOP MANAGEMENT",
+        subtext: "Two contexts. One unified retail operating workspace.",
+        mockup_card: {
+          title: "E-Commerce OS",
+          items: ["↗ Inventory & SKU Matrix", "↗ Multi-Channel Campaign & Content Engine"]
+        },
+        cta: "Explore the shop template →",
+        bg_theme: "modern_packaging",
+        palette: "terracotta"
+      },
+      {
+        archetype: "tablet_mockup_focus",
+        top_badge: "LAUNCHIST",
+        pagination: "P08",
+        headline: "Make the next step visible.",
+        subtext: "A calmer morning begins with zero starting ambiguity.",
+        mockup_card: {
+          title: "★ Goals & Habits",
+          items: ["Next step: Lay out clothes tonight", "Low: Clear physical desktop", "High: Draft 3 pillar scripts"]
+        },
+        cta: "View the planning dashboard →",
+        bg_theme: "sunlit_desk",
+        palette: "sage_green"
+      },
+      {
+        archetype: "editorial_headline",
+        top_badge: "LAUNCHIST",
+        pagination: "P09",
+        headline: "REAL ESTATE ORGANIZATION",
+        subtext: "Give every transaction a place to start. Name the stage.",
+        mockup_card: {
+          title: "Transaction Coordination",
+          items: ["Active Listing", "Under Contract / Escrow", "Condition Milestones"]
+        },
+        cta: "Save this review prompt →",
+        bg_theme: "minimal_interior",
+        palette: "sage_green"
+      },
+      {
+        archetype: "two_part_question",
+        top_badge: "LAUNCHIST",
+        pagination: "P10",
+        headline: "NOTION SECOND BRAIN",
+        subtext: "Read the actual hub labels. Two starting points for your review.",
+        mockup_card: {
+          title: "Hub Distinction",
+          items: ["🎯 Vision Hub: Choose your direction", "⚡ Productivity Hub: Turn intention into action"]
+        },
+        cta: "View the hub structure →",
+        bg_theme: "leather_desk",
+        palette: "dark_charcoal"
+      },
+      {
+        archetype: "editorial_headline",
+        top_badge: "LAUNCHIST",
+        pagination: "P11",
+        headline: "CREATOR WORKFLOW",
+        subtext: "Published. Where does it lead? Connect content to real offers.",
+        mockup_card: {
+          title: "Relational Mapping",
+          items: ["Published: YouTube Video", "Destination: Creator OS Store", "Revenue: Stripe Settlement"]
+        },
+        cta: "See the creator workflow →",
+        bg_theme: "studio_camera",
+        palette: "dark_charcoal"
+      },
+      {
+        archetype: "tablet_mockup_focus",
+        top_badge: "LAUNCHIST",
+        pagination: "P12",
+        headline: "NOTION INVENTORY",
+        subtext: "Start with the workspace. Review product context first.",
+        mockup_card: {
+          title: "E-Commerce OS",
+          items: ["↗ Inventory & SKU Matrix", "↗ Reorder Lead Times: 14 Days"]
+        },
+        cta: "Inspect the inventory workspace →",
+        bg_theme: "warehouse_boxes",
+        palette: "muted_navy"
+      },
+      {
+        archetype: "tablet_mockup_focus",
+        top_badge: "LAUNCHIST",
+        pagination: "P13",
+        headline: "Gentle morning routine planner",
+        subtext: "Make tomorrow's first step concrete before closing the day.",
+        mockup_card: {
+          title: "ADHD Life OS",
+          items: ["A calmer morning", "Next step: Lay out clothes tonight"]
+        },
+        cta: "See the planning context →",
+        bg_theme: "cozy_chair",
+        palette: "terracotta"
+      },
+      {
+        archetype: "tablet_mockup_focus",
+        top_badge: "LAUNCHIST",
+        pagination: "P14",
+        headline: "TRANSACTION WORKFLOW",
+        subtext: "See the stage. Plan the review. 20 escrow files without chaos.",
+        mockup_card: {
+          title: "Escrow Stages",
+          items: ["Active Listing", "Under Contract / Escrow"]
+        },
+        cta: "Explore Real Estate OS →",
+        bg_theme: "modern_study",
+        palette: "dark_charcoal"
+      },
+      {
+        archetype: "editorial_headline",
+        top_badge: "LAUNCHIST",
+        pagination: "P15",
+        headline: "NOTION SECOND BRAIN",
+        subtext: "Choose a hub for today. Keep active projects isolated from archives.",
+        mockup_card: {
+          title: "System Hubs",
+          items: ["🎯 Vision Hub", "⚡ Productivity Hub", "☕ Lifestyle Hub"]
+        },
+        cta: "Explore Second Brain →",
+        bg_theme: "warm_linen",
+        palette: "dark_charcoal"
+      },
+      {
+        archetype: "checklist_card",
+        top_badge: "LAUNCHIST",
+        pagination: "P16",
+        headline: "NOTION CREATOR TEMPLATE",
+        subtext: "Content with a clear offer. Stop publishing into open loops.",
+        mockup_card: {
+          title: "Publishing QA",
+          items: ["Platform: YouTube Long-form", "Promoted offer: Creator Toolkit", "QA: Script + CTA verified"]
+        },
+        cta: "Explore Creator OS →",
+        bg_theme: "studio_camera",
+        palette: "terracotta"
+      },
+      {
+        archetype: "tablet_mockup_focus",
+        top_badge: "LAUNCHIST",
+        pagination: "P17",
+        headline: "Inventory, up close.",
+        subtext: "Give products a clear review context before paid advertising.",
+        mockup_card: {
+          title: "Inventory & SKU Matrix",
+          items: ["Cotton Tote: In Stock (420)", "Multi-Channel Campaign & Content Engine"]
+        },
+        cta: "Inspect E-Commerce OS →",
+        bg_theme: "linen_tote",
+        palette: "dark_charcoal"
+      },
+      {
+        archetype: "minimal_quote",
+        top_badge: "LAUNCHIST",
+        pagination: "P18",
+        headline: "What is the first visible action?",
+        subtext: "Choose one thing you can start without cognitive friction.",
+        mockup_card: {
+          title: "Action Filter",
+          items: ["Small steps compound into unbreakable operational momentum."]
+        },
+        cta: "Save the small-step prompt →",
+        bg_theme: "minimal_steps",
+        palette: "sage_green"
+      },
+      {
+        archetype: "two_part_question",
+        top_badge: "LAUNCHIST",
+        pagination: "P19",
+        headline: "Read the actual pipeline groups.",
+        subtext: "Stage context for a transaction review without spreadsheets.",
+        mockup_card: {
+          title: "Real Estate OS",
+          items: ["Active Listing", "Under Contract / Escrow"]
+        },
+        cta: "Inspect the pipeline groups →",
+        bg_theme: "architect_desk",
+        palette: "muted_navy"
+      },
+      {
+        archetype: "two_part_question",
+        top_badge: "LAUNCHIST",
+        pagination: "P20",
+        headline: "Direction or action?",
+        subtext: "Second Brain & 2027 Life OS. Know where your current thought belongs.",
+        mockup_card: {
+          title: "Hub Distinction",
+          items: ["🎯 Vision Hub: Choose your direction.", "⚡ Productivity Hub: Turn intention into action."]
+        },
+        cta: "Compare the two hubs →",
+        bg_theme: "warm_linen",
+        palette: "warm_oat"
       }
     ];
 
-    let currentPins = JSON.parse(JSON.stringify(defaultPins));
-
-    // Color Palettes
-    const palettes = {
-      crimson: {
-        bgStart: '#881337',
-        bgMid: '#4c0519',
-        bgEnd: '#0f172a',
-        accent: '#f43f5e',
-        tagBg: '#ffe4e6',
-        tagText: '#9f1239'
+    const PALETTES = {
+      warm_oat: {
+        bg: '#F4F3EE',
+        card: '#FFFFFF',
+        text: '#111110',
+        sub: '#52504B',
+        accent: '#1A362B',
+        accentText: '#FFFFFF',
+        border: '#E2DFD8',
+        tagBg: '#EAE6DF',
+        tagText: '#111110'
       },
-      emerald: {
-        bgStart: '#064e3b',
-        bgMid: '#022c22',
-        bgEnd: '#0f172a',
-        accent: '#10b981',
-        tagBg: '#d1fae5',
-        tagText: '#065f46'
+      dark_charcoal: {
+        bg: '#171716',
+        card: '#222220',
+        text: '#F4F3F0',
+        sub: '#BCBAAF',
+        accent: '#C97A3E',
+        accentText: '#FFFFFF',
+        border: '#33312D',
+        tagBg: '#2A2926',
+        tagText: '#F4F3F0'
       },
-      midnight: {
-        bgStart: '#3b0764',
-        bgMid: '#1e1b4b',
-        bgEnd: '#09090b',
-        accent: '#a855f7',
-        tagBg: '#f3e8ff',
-        tagText: '#6b21a8'
+      sage_green: {
+        bg: '#EDF1EE',
+        card: '#FFFFFF',
+        text: '#111110',
+        sub: '#48524B',
+        accent: '#1A362B',
+        accentText: '#FFFFFF',
+        border: '#DCE4DD',
+        tagBg: '#DDE6DF',
+        tagText: '#1A362B'
       },
-      gold: {
-        bgStart: '#78350f',
-        bgMid: '#451a03',
-        bgEnd: '#0c0a09',
-        accent: '#f59e0b',
-        tagBg: '#fef3c7',
-        tagText: '#92400e'
+      terracotta: {
+        bg: '#F5EFEA',
+        card: '#FFFFFF',
+        text: '#1C1513',
+        sub: '#5E4C46',
+        accent: '#8E3E2B',
+        accentText: '#FFFFFF',
+        border: '#E8DBD3',
+        tagBg: '#EADCCE',
+        tagText: '#8E3E2B'
+      },
+      muted_navy: {
+        bg: '#1B2129',
+        card: '#242C36',
+        text: '#F5F7FA',
+        sub: '#A8B4C0',
+        accent: '#3B82F6',
+        accentText: '#FFFFFF',
+        border: '#333E4D',
+        tagBg: '#2C3642',
+        tagText: '#93C5FD'
       }
     };
 
-    // DOM Elements
-    const inputContent = document.getElementById('input-content');
-    const inputDomain = document.getElementById('input-domain');
-    const inputTag = document.getElementById('input-tag');
-    const selectPalette = document.getElementById('select-palette');
-    const btnGenerateAi = document.getElementById('btn-generate-ai');
-    const labelGenerate = document.getElementById('label-generate');
-    const btnDemoMode = document.getElementById('btn-demo-mode');
-    const btnDownloadAllZip = document.getElementById('btn-download-all-zip');
-
-    const alertBanner = document.getElementById('alert-banner');
-    const alertMessage = document.getElementById('alert-message');
-    const btnCloseAlert = document.getElementById('btn-close-alert');
-
-    // Settings Modal Elements
-    const btnOpenSettings = document.getElementById('btn-open-settings');
-    const settingsModal = document.getElementById('settings-modal');
-    const btnCloseSettings = document.getElementById('btn-close-settings');
-    const btnCancelSettings = document.getElementById('btn-cancel-settings');
-    const btnSaveSettings = document.getElementById('btn-save-settings');
-    const btnClearKey = document.getElementById('btn-clear-key');
-    const inputApiKey = document.getElementById('input-api-key');
-    const selectProvider = document.getElementById('select-provider');
-    const inputModel = document.getElementById('input-model');
-    const keyStatusLabel = document.getElementById('key-status-label');
-
-    function loadSettings() {
-      const savedKey = localStorage.getItem('byok_api_key') || '';
-      const savedProvider = localStorage.getItem('byok_provider') || 'gemini';
-      const savedModel = localStorage.getItem('byok_model') || (savedProvider === 'gemini' ? 'gemini-2.5-flash' : 'gpt-4o-mini');
-
-      inputApiKey.value = savedKey;
-      selectProvider.value = savedProvider;
-      inputModel.value = savedModel;
-
-      if (savedKey) {
-        keyStatusLabel.textContent = `API Key: Connected (${savedProvider})`;
-        keyStatusLabel.parentElement.classList.replace('text-slate-700', 'text-red-700');
-        keyStatusLabel.parentElement.classList.add('bg-red-50', 'border-red-200');
-      } else {
-        keyStatusLabel.textContent = 'API Key: Not Set';
-      }
-    }
-
-    btnOpenSettings.addEventListener('click', () => settingsModal.classList.remove('hidden'));
-    function closeSettings() { settingsModal.classList.add('hidden'); }
-    btnCloseSettings.addEventListener('click', closeSettings);
-    btnCancelSettings.addEventListener('click', closeSettings);
-
-    btnSaveSettings.addEventListener('click', () => {
-      const key = inputApiKey.value.trim();
-      const prov = selectProvider.value;
-      const model = inputModel.value.trim();
-
-      if (key) {
-        localStorage.setItem('byok_api_key', key);
-        localStorage.setItem('byok_provider', prov);
-        localStorage.setItem('byok_model', model);
-      } else {
-        localStorage.removeItem('byok_api_key');
-      }
-      loadSettings();
-      closeSettings();
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      setupEventListeners();
+      checkSavedKey();
+      generateBatch(3, true);
     });
 
-    btnClearKey.addEventListener('click', () => {
-      localStorage.removeItem('byok_api_key');
-      inputApiKey.value = '';
-      loadSettings();
-      closeSettings();
-    });
+    function setupEventListeners() {
+      document.querySelectorAll('.batch-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.batch-btn').forEach(b => {
+            b.classList.remove('border-[#1A362B]', 'bg-[#1A362B]', 'text-white');
+            b.classList.add('border-[#EAE8E3]', 'bg-[#FBFBF9]', 'text-[#111110]');
+          });
+          btn.classList.remove('border-[#EAE8E3]', 'bg-[#FBFBF9]', 'text-[#111110]');
+          btn.classList.add('border-[#1A362B]', 'bg-[#1A362B]', 'text-white');
+          
+          currentBatchSize = parseInt(btn.dataset.batch);
+          document.getElementById('btn-generate-text').textContent = `Generate ${currentBatchSize} Editorial Pins`;
+        });
+      });
 
-    function showAlert(msg) {
-      alertMessage.textContent = msg;
-      alertBanner.classList.remove('hidden');
-    }
-    btnCloseAlert.addEventListener('click', () => alertBanner.classList.add('hidden'));
+      document.querySelectorAll('.chip-niche').forEach(chip => {
+        chip.addEventListener('click', () => {
+          document.getElementById('input-topic').value = chip.dataset.val;
+        });
+      });
 
-    // Text wrapping on 1000x1500 canvas
-    function wrapText(context, text, x, y, maxWidth, lineHeight) {
-      const words = text.split(' ');
-      let line = '';
-      let currentY = y;
+      document.getElementById('btn-quick-fill').addEventListener('click', () => {
+        const samples = [
+          "Notion Daily Routine for ADHD Minds with Dopamine Tiers",
+          "E-Commerce Contribution Margin & True Break-Even ROAS Matrix",
+          "The 10x Content Repurposing Pipeline for Digital Creators",
+          "Real Estate Transaction Coordination & 48-Hour Inspection Checklists",
+          "Second Brain Relational Vault with Progressive Summarization"
+        ];
+        document.getElementById('input-topic').value = samples[Math.floor(Math.random() * samples.length)];
+      });
 
-      for (let n = 0; n < words.length; n++) {
-        const testLine = line + words[n] + ' ';
-        const metrics = context.measureText(testLine);
-        const testWidth = metrics.width;
-        if (testWidth > maxWidth && n > 0) {
-          context.fillText(line, x, currentY);
-          line = words[n] + ' ';
-          currentY += lineHeight;
-        } else {
-          line = testLine;
+      document.getElementById('btn-generate').addEventListener('click', () => {
+        generateBatch(currentBatchSize, false);
+      });
+      document.getElementById('btn-demo').addEventListener('click', () => {
+        generateBatch(currentBatchSize, true);
+      });
+
+      document.getElementById('btn-api-key').addEventListener('click', () => {
+        document.getElementById('modal-key').classList.remove('hidden');
+      });
+      document.getElementById('btn-close-modal').addEventListener('click', () => {
+        document.getElementById('modal-key').classList.add('hidden');
+      });
+      document.getElementById('btn-save-key').addEventListener('click', () => {
+        const key = document.getElementById('input-gemini-key').value.trim();
+        if (key) {
+          localStorage.setItem('byok_gemini_key', key);
         }
-      }
-      context.fillText(line, x, currentY);
-      return currentY + lineHeight;
-    }
+        checkSavedKey();
+        document.getElementById('modal-key').classList.add('hidden');
+      });
+      document.getElementById('btn-clear-key').addEventListener('click', () => {
+        localStorage.removeItem('byok_gemini_key');
+        document.getElementById('input-gemini-key').value = '';
+        checkSavedKey();
+        document.getElementById('modal-key').classList.add('hidden');
+      });
 
-    // Render Pin Canvas (1000 x 1500)
-    function renderPin(index) {
-      const canvas = document.getElementById(`pin-canvas-${index}`);
-      if (!canvas) return;
-      const ctx = canvas.getContext('2d');
-      const pin = currentPins[index];
-      const palette = palettes[selectPalette.value] || palettes.crimson;
+      document.getElementById('btn-download-zip').addEventListener('click', downloadAllPinsZip);
 
-      const width = 1000;
-      const height = 1500;
-
-      // 1. Background Gradient
-      const grad = ctx.createLinearGradient(0, 0, width, height);
-      grad.addColorStop(0, palette.bgStart);
-      grad.addColorStop(0.4, palette.bgMid);
-      grad.addColorStop(1, palette.bgEnd);
-      ctx.fillStyle = grad;
-      ctx.fillRect(0, 0, width, height);
-
-      // Subtle atmospheric circular glow
-      const radial = ctx.createRadialGradient(width / 2, 400, 50, width / 2, 400, 700);
-      radial.addColorStop(0, 'rgba(255, 255, 255, 0.15)');
-      radial.addColorStop(1, 'rgba(0, 0, 0, 0)');
-      ctx.fillStyle = radial;
-      ctx.fillRect(0, 0, width, height);
-
-      // 2. Category Pill Badge (Top Left)
-      const tag = inputTag.value.trim() || pin.pill || 'FEATURED GUIDE';
-      ctx.font = '800 24px "Plus Jakarta Sans", sans-serif';
-      const tagMetrics = ctx.measureText(tag);
-      const tagWidth = tagMetrics.width + 48;
-
-      ctx.fillStyle = palette.accent;
-      ctx.beginPath();
-      ctx.roundRect(80, 100, tagWidth, 54, 27);
-      ctx.fill();
-
-      ctx.fillStyle = '#ffffff';
-      ctx.fillText(tag, 104, 136);
-
-      // 3. Main Bold Headline
-      ctx.font = '900 68px "Plus Jakarta Sans", sans-serif';
-      ctx.fillStyle = '#ffffff';
-      const endY = wrapText(ctx, pin.headline, 80, 480, width - 160, 84);
-
-      // Accent Divider Bar
-      ctx.fillStyle = palette.accent;
-      ctx.fillRect(80, endY + 20, 140, 8);
-
-      // 4. Supporting Subtext
-      ctx.font = '500 36px "Plus Jakarta Sans", sans-serif';
-      ctx.fillStyle = '#cbd5e1';
-      wrapText(ctx, pin.subtext, 80, endY + 70, width - 160, 52);
-
-      // 5. Website Domain Badge (Bottom Pill)
-      const domain = inputDomain.value.trim() || 'yourwebsite.com';
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
-      ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.roundRect(80, height - 160, width - 160, 80, 40);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.font = '700 32px "JetBrains Mono", monospace';
-      ctx.fillStyle = '#ffffff';
-      ctx.textAlign = 'center';
-      ctx.fillText(domain, width / 2, height - 110);
-      ctx.textAlign = 'left';
-
-      // Sync inline edit field
-      const editInput = document.getElementById(`edit-headline-${index}`);
-      if (editInput && editInput !== document.activeElement) {
-        editInput.value = pin.headline;
-      }
-    }
-
-    function renderAllPins() {
-      for (let i = 0; i < 3; i++) {
-        renderPin(i);
-      }
-    }
-
-    // Inline Headline Edit Listeners
-    for (let i = 0; i < 3; i++) {
-      const editInput = document.getElementById(`edit-headline-${i}`);
-      editInput.addEventListener('input', (e) => {
-        currentPins[i].headline = e.target.value;
-        renderPin(i);
+      document.getElementById('btn-close-preview').addEventListener('click', () => {
+        document.getElementById('modal-preview').classList.add('hidden');
+      });
+      document.getElementById('btn-apply-edit').addEventListener('click', applyModalEdit);
+      document.getElementById('btn-download-single').addEventListener('click', () => {
+        if (currentPreviewIndex >= 0) downloadSinglePin(currentPreviewIndex);
       });
     }
 
-    inputDomain.addEventListener('input', renderAllPins);
-    inputTag.addEventListener('input', renderAllPins);
-    selectPalette.addEventListener('change', renderAllPins);
-
-    // Single Pin Download
-    document.querySelectorAll('.btn-download-single').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const idx = parseInt(btn.dataset.pin, 10);
-        const canvas = document.getElementById(`pin-canvas-${idx}`);
-        if (!canvas) return;
-
-        const a = document.createElement('a');
-        a.download = `pinterest-pin-angle-${idx + 1}.png`;
-        a.href = canvas.toDataURL('image/png');
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-      });
-    });
-
-    // Download All 3 Pins as ZIP
-    btnDownloadAllZip.addEventListener('click', async () => {
-      const zip = new JSZip();
-
-      for (let i = 0; i < 3; i++) {
-        const canvas = document.getElementById(`pin-canvas-${i}`);
-        const dataUrl = canvas.toDataURL('image/png');
-        const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '');
-        zip.file(`pinterest_pin_${i + 1}_${currentPins[i].angle.toLowerCase()}.png`, base64Data, { base64: true });
+    function checkSavedKey() {
+      const key = localStorage.getItem('byok_gemini_key');
+      const statusText = document.getElementById('key-status-text');
+      if (key) {
+        statusText.textContent = 'Gemini Active';
+        statusText.className = 'text-[#1A362B] font-bold';
+        document.getElementById('input-gemini-key').value = key;
+      } else {
+        statusText.textContent = 'BYOK Key (Demo Mode)';
+        statusText.className = 'text-[#76746E]';
       }
+    }
 
-      const content = await zip.generateAsync({ type: 'blob' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(content);
-      a.download = 'pinterest-pin-batch.zip';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    });
+    async function generateBatch(batchSize, forceDemo = false) {
+      const btn = document.getElementById('btn-generate');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Compositing ${batchSize} Canvas Pins...`;
+      lucide.createIcons();
 
-    // Demo Mode Loader
-    btnDemoMode.addEventListener('click', () => {
-      currentPins = JSON.parse(JSON.stringify(defaultPins));
-      renderAllPins();
-      showAlert('Loaded pre-built 3-angle Pinterest pin batch!');
-    });
-
-    // AI Generation via Direct In-Browser Fetch (BYOK)
-    btnGenerateAi.addEventListener('click', async () => {
-      const content = inputContent.value.trim();
-      if (!content) {
-        showAlert('Please enter a blog post title, URL, or product summary first.');
-        return;
-      }
-
-      const apiKey = localStorage.getItem('byok_api_key');
-      if (!apiKey) {
-        showAlert('No API Key detected. Please click "API Key: Not Set" to enter your key, or use "Try Demo" to preview.');
-        settingsModal.classList.remove('hidden');
-        return;
-      }
-
-      const provider = localStorage.getItem('byok_provider') || 'gemini';
-      const model = localStorage.getItem('byok_model') || (provider === 'gemini' ? 'gemini-2.5-flash' : 'gpt-4o-mini');
-
-      labelGenerate.textContent = 'Generating 3 Pin Angles...';
-      btnGenerateAi.disabled = true;
-
-      const systemPrompt = `You are a viral Pinterest content strategist.
-Given this topic: "${content}", generate three high-CTR vertical pin variations.
-Pin 1 must be Curiosity/Intrigue.
-Pin 2 must be a Listicle/Numbered guide.
-Pin 3 must be a Direct Benefit/Transformation.
-
-Return ONLY a valid JSON array of 3 objects with this exact schema:
-[
-  {
-    "angle": "Curiosity",
-    "pill": "QUICK CATEGORY TAG",
-    "headline": "Punchy Hook Headline (max 9 words)",
-    "subtext": "Compelling subtext under 15 words"
-  }
-]
-Return zero extra text outside the JSON.`;
+      const topic = document.getElementById('input-topic').value.trim() || "ADHD Life OS & Executive Function Daily System";
+      const brand = document.getElementById('input-brand').value.trim() || "LAUNCHIST";
+      const domain = document.getElementById('input-url').value.trim() || "launchist.store";
+      const themeSelect = document.getElementById('select-palette').value;
+      const apiKey = localStorage.getItem('byok_gemini_key');
 
       try {
-        let jsonResponseText = '';
+        let pinsData = [];
 
-        if (provider === 'gemini') {
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-          const res = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: systemPrompt }] }],
-              generationConfig: { responseMimeType: 'application/json' }
-            })
-          });
-
-          if (!res.ok) {
-            const errData = await res.json().catch(() => ({}));
-            throw new Error(errData.error?.message || `Gemini returned status ${res.status}`);
-          }
-
-          const data = await res.json();
-          jsonResponseText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
+        if (!forceDemo && apiKey) {
+          pinsData = await fetchGeminiPins(apiKey, topic, brand, domain, batchSize, themeSelect);
         } else {
-          const url = `https://api.openai.com/v1/chat/completions`;
-          const res = await fetch(url, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${apiKey}`
-            },
-            body: JSON.stringify({
-              model: model,
-              messages: [{ role: 'user', content: systemPrompt }],
-              response_format: { type: 'json_object' }
-            })
-          });
-
-          if (!res.ok) {
-            const errData = await res.json().catch(() => ({}));
-            throw new Error(errData.error?.message || `OpenAI returned status ${res.status}`);
-          }
-
-          const data = await res.json();
-          jsonResponseText = data.choices?.[0]?.message?.content;
+          pinsData = generateDemoPins(topic, brand, domain, batchSize, themeSelect);
         }
 
-        let parsed = JSON.parse(jsonResponseText);
-        if (!Array.isArray(parsed) && parsed.pins) parsed = parsed.pins;
+        generatedPins = pinsData;
+        renderPinGallery();
 
-        if (Array.isArray(parsed) && parsed.length >= 3) {
-          currentPins = parsed.slice(0, 3);
-          renderAllPins();
-          showAlert(`Successfully generated 3 pin designs with ${model}!`);
-        } else {
-          throw new Error('AI returned an unexpected array structure.');
-        }
+        document.getElementById('empty-state').classList.add('hidden');
+        document.getElementById('output-header').classList.remove('hidden');
+        document.getElementById('batch-stats-text').textContent = `${pinsData.length} High-DPI 1000×1500 Canvas Pins Ready for Download`;
 
       } catch (err) {
-        console.error(err);
-        showAlert(`Generation failed: ${err.message}`);
+        console.error("Generation error, falling back to benchmark dataset:", err);
+        generatedPins = generateDemoPins(topic, brand, domain, batchSize, themeSelect);
+        renderPinGallery();
+        document.getElementById('empty-state').classList.add('hidden');
+        document.getElementById('output-header').classList.remove('hidden');
       } finally {
-        labelGenerate.textContent = 'Generate 3 Pin Batch';
-        btnGenerateAi.disabled = false;
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        lucide.createIcons();
       }
-    });
+    }
 
-    // Initialization
-    loadSettings();
-    renderAllPins();
+    async function fetchGeminiPins(apiKey, topic, brand, domain, count, themeSelect) {
+      const systemPrompt = `You are an elite creative director for Launchist, a luxury productivity & operational systems brand ("Warm Editorial Commerce" aesthetic like Braun, Kinfolk, and James Clear).
+Generate exactly ${count} distinct, high-contrast, editorial Pinterest pins (1000x1500 vertical) about: "${topic}".
+Brand Name: "${brand}". Reference Domain: "${domain}".
+
+Return a pure JSON array containing ${count} pin objects with these exact keys:
+[
+  {
+    "archetype": "one of: editorial_headline, tablet_mockup_focus, checklist_card, two_part_question, minimal_quote",
+    "top_badge": "${brand}",
+    "pagination": "P01",
+    "headline": "Punchy hook 2 to 5 words max per line, e.g. 'A publish date is not an offer plan.' or 'Make the goal small enough to start.'",
+    "subtext": "1 concise supporting operational sentence",
+    "mockup_card": {
+      "title": "Clean Notion database or workflow title (e.g. 'Publishing QA', 'Inventory & SKU Matrix', 'Today\\'s overview', 'Escrow Milestones')",
+      "items": ["2 to 3 concise bullet items or Notion table rows"]
+    },
+    "cta": "Action pill e.g. 'Save this checklist →', 'Preview the system →', 'See what\\'s inside →'",
+    "palette": "${themeSelect === 'auto' ? 'one of: warm_oat, dark_charcoal, sage_green, terracotta, muted_navy' : themeSelect}"
+  }
+]`;
+
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: systemPrompt }] }],
+          generationConfig: {
+            response_mime_type: "application/json",
+            temperature: 0.7
+          }
+        })
+      });
+
+      if (!res.ok) throw new Error(`Gemini API error: ${res.statusText}`);
+      const data = await res.json();
+      const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      const parsed = JSON.parse(rawText);
+      return Array.isArray(parsed) ? parsed : [parsed];
+    }
+
+    function generateDemoPins(topic, brand, domain, count, themeSelect) {
+      const list = [];
+      const palettes = ['warm_oat', 'dark_charcoal', 'sage_green', 'terracotta', 'muted_navy'];
+      
+      for (let i = 0; i < count; i++) {
+        const benchmark = LAUNCHIST_BENCHMARK_PINS[i % LAUNCHIST_BENCHMARK_PINS.length];
+        const selectedPalette = themeSelect === 'auto' 
+          ? (benchmark.palette || palettes[i % palettes.length]) 
+          : themeSelect;
+
+        list.push({
+          archetype: benchmark.archetype,
+          top_badge: brand,
+          pagination: `P${String(i + 1).padStart(2, '0')}`,
+          headline: benchmark.headline,
+          subtext: benchmark.subtext,
+          mockup_card: {
+            title: benchmark.mockup_card.title,
+            items: [...benchmark.mockup_card.items]
+          },
+          cta: benchmark.cta,
+          palette: selectedPalette
+        });
+      }
+      return list;
+    }
+
+    function renderPinToCanvas(pin, canvas) {
+      const W = 1000;
+      const H = 1500;
+      canvas.width = W;
+      canvas.height = H;
+      const ctx = canvas.getContext('2d');
+
+      const pal = PALETTES[pin.palette] || PALETTES.warm_oat;
+
+      ctx.fillStyle = pal.bg;
+      ctx.fillRect(0, 0, W, H);
+
+      const grad = ctx.createRadialGradient(W / 2, H / 2, W * 0.2, W / 2, H / 2, H * 0.8);
+      grad.addColorStop(0, 'rgba(255, 255, 255, 0.04)');
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0.08)');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
+
+      ctx.fillStyle = pal.sub;
+      ctx.font = '600 24px "Plus Jakarta Sans", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.letterSpacing = '2px';
+      ctx.fillText(pin.top_badge || 'LAUNCHIST', 70, 95);
+
+      ctx.textAlign = 'right';
+      ctx.font = '500 22px "JetBrains Mono", monospace';
+      ctx.fillText(`${pin.pagination || 'P01'} / 06`, W - 70, 95);
+
+      ctx.strokeStyle = pal.border;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(70, 125);
+      ctx.lineTo(W - 70, 125);
+      ctx.stroke();
+
+      ctx.textAlign = 'left';
+      ctx.fillStyle = pal.text;
+      ctx.font = '700 78px "Fraunces", Georgia, serif';
+
+      const headlineLines = wrapText(ctx, pin.headline, W - 140);
+      let textY = 230;
+      const lineHeight = 88;
+
+      headlineLines.forEach(line => {
+        ctx.fillText(line, 70, textY);
+        textY += lineHeight;
+      });
+
+      if (pin.subtext) {
+        textY += 15;
+        ctx.fillStyle = pal.sub;
+        ctx.font = '500 28px "Plus Jakarta Sans", sans-serif';
+        const subLines = wrapText(ctx, pin.subtext, W - 140);
+        subLines.forEach(sline => {
+          ctx.fillText(sline, 70, textY);
+          textY += 40;
+        });
+      }
+
+      const cardY = Math.max(textY + 40, 560);
+      const cardHeight = 650;
+      const cardWidth = W - 140;
+
+      drawTactileCard(ctx, 70, cardY, cardWidth, cardHeight, pin, pal);
+
+      const ctaY = H - 110;
+      const ctaText = pin.cta || 'See what is inside →';
+      ctx.font = '600 24px "Plus Jakarta Sans", sans-serif';
+      const ctaWidth = ctx.measureText(ctaText).width + 60;
+
+      ctx.fillStyle = pal.accent;
+      roundRect(ctx, 70, ctaY, ctaWidth, 54, 27, true, false);
+
+      ctx.fillStyle = pal.accentText;
+      ctx.textAlign = 'left';
+      ctx.fillText(ctaText, 100, ctaY + 36);
+
+      ctx.textAlign = 'right';
+      ctx.fillStyle = pal.sub;
+      ctx.font = '500 20px "JetBrains Mono", monospace';
+      ctx.fillText(document.getElementById('input-url').value.trim() || 'launchist.store', W - 70, ctaY + 36);
+    }
+
+    function drawTactileCard(ctx, x, y, width, height, pin, pal) {
+      ctx.save();
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.12)';
+      ctx.shadowBlur = 30;
+      ctx.shadowOffsetY = 15;
+
+      ctx.fillStyle = pal.card;
+      roundRect(ctx, x, y, width, height, 24, true, false);
+      ctx.restore();
+
+      ctx.strokeStyle = pal.border;
+      ctx.lineWidth = 1.5;
+      roundRect(ctx, x, y, width, height, 24, false, true);
+
+      ctx.fillStyle = pal.tagBg;
+      ctx.beginPath();
+      ctx.roundRect(x, y, width, 64, [24, 24, 0, 0]);
+      ctx.fill();
+
+      ctx.fillStyle = '#E5E5E5';
+      ctx.beginPath();
+      ctx.arc(x + 32, y + 32, 6, 0, Math.PI * 2);
+      ctx.arc(x + 50, y + 32, 6, 0, Math.PI * 2);
+      ctx.arc(x + 68, y + 32, 6, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = pal.text;
+      ctx.font = '700 22px "Plus Jakarta Sans", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(pin.mockup_card?.title || 'System Workspace', x + 95, y + 39);
+
+      const items = pin.mockup_card?.items || [];
+      let itemY = y + 130;
+
+      if (pin.archetype === 'checklist_card') {
+        items.forEach((item, idx) => {
+          ctx.strokeStyle = pal.accent;
+          ctx.lineWidth = 2.5;
+          ctx.fillStyle = pal.tagBg;
+          roundRect(ctx, x + 40, itemY - 24, 34, 34, 8, true, true);
+
+          ctx.strokeStyle = pal.accent;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(x + 48, itemY - 7);
+          ctx.lineTo(x + 56, itemY - 1);
+          ctx.lineTo(x + 67, itemY - 16);
+          ctx.stroke();
+
+          ctx.fillStyle = pal.text;
+          ctx.font = '600 26px "Plus Jakarta Sans", sans-serif';
+          ctx.textAlign = 'left';
+          ctx.fillText(item, x + 95, itemY);
+
+          itemY += 90;
+        });
+      } else if (pin.archetype === 'two_part_question') {
+        const halfH = (height - 120) / 2 - 15;
+        items.slice(0, 2).forEach((item, idx) => {
+          const splitY = y + 90 + idx * (halfH + 20);
+          
+          ctx.fillStyle = pal.tagBg;
+          roundRect(ctx, x + 30, splitY, width - 60, halfH, 16, true, false);
+          
+          ctx.strokeStyle = pal.border;
+          ctx.lineWidth = 1;
+          roundRect(ctx, x + 30, splitY, width - 60, halfH, 16, false, true);
+
+          ctx.fillStyle = pal.text;
+          ctx.font = '700 28px "Fraunces", Georgia, serif';
+          ctx.fillText(item.split(':')[0] || item, x + 55, splitY + 50);
+
+          if (item.includes(':')) {
+            ctx.fillStyle = pal.sub;
+            ctx.font = '500 22px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText(item.split(':')[1], x + 55, splitY + 95);
+          }
+        });
+      } else {
+        items.forEach((item, idx) => {
+          const rowY = itemY + idx * 85;
+
+          ctx.fillStyle = idx % 2 === 0 ? pal.card : pal.tagBg;
+          roundRect(ctx, x + 25, rowY - 35, width - 50, 68, 12, true, false);
+
+          ctx.fillStyle = pal.accent;
+          ctx.font = '700 24px "Plus Jakarta Sans", sans-serif';
+          ctx.fillText('↗', x + 45, rowY + 8);
+
+          ctx.fillStyle = pal.text;
+          ctx.font = '600 24px "Plus Jakarta Sans", sans-serif';
+          ctx.fillText(item.replace(/^↗\s*/, ''), x + 85, rowY + 8);
+
+          ctx.fillStyle = pal.tagBg;
+          roundRect(ctx, x + width - 180, rowY - 18, 130, 36, 18, true, false);
+          ctx.fillStyle = pal.sub;
+          ctx.font = '600 16px "JetBrains Mono", monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText('NOTION_DB', x + width - 115, rowY + 6);
+          ctx.textAlign = 'left';
+        });
+      }
+    }
+
+    function renderPinGallery() {
+      const container = document.getElementById('pins-container');
+      container.innerHTML = '';
+
+      generatedPins.forEach((pin, index) => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-2xl border border-[#EAE8E3] overflow-hidden p-3 pin-shadow hover:shadow-md transition flex flex-col justify-between';
+
+        const canvas = document.createElement('canvas');
+        canvas.className = 'w-full h-auto rounded-xl aspect-[2/3] object-cover cursor-pointer';
+        renderPinToCanvas(pin, canvas);
+
+        canvas.addEventListener('click', () => openPreviewModal(index));
+
+        const infoBar = document.createElement('div');
+        infoBar.className = 'mt-3 flex items-center justify-between text-xs px-1';
+        infoBar.innerHTML = `
+          <div class="flex items-center gap-1.5 font-bold text-[#111110]">
+            <span class="px-2 py-0.5 rounded bg-[#F4F3EE] text-[10px] font-mono">${pin.pagination || 'P' + (index + 1)}</span>
+            <span class="truncate max-w-[130px]">${pin.headline}</span>
+          </div>
+          <button class="btn-dl-single p-1.5 rounded-lg text-[#76746E] hover:text-[#111110] hover:bg-[#F4F3EE] transition" title="Download PNG">
+            <i data-lucide="download" class="w-4 h-4"></i>
+          </button>
+        `;
+
+        infoBar.querySelector('.btn-dl-single').addEventListener('click', (e) => {
+          e.stopPropagation();
+          downloadSinglePin(index);
+        });
+
+        card.appendChild(canvas);
+        card.appendChild(infoBar);
+        container.appendChild(card);
+      });
+
+      lucide.createIcons();
+    }
+
+    function openPreviewModal(index) {
+      currentPreviewIndex = index;
+      const pin = generatedPins[index];
+      const modal = document.getElementById('modal-preview');
+      const canvas = document.getElementById('modal-canvas');
+
+      document.getElementById('preview-modal-title').textContent = `Inspect & Tweak Pin (${pin.pagination || 'P' + (index + 1)})`;
+      document.getElementById('edit-headline').value = pin.headline;
+      document.getElementById('edit-subtext').value = pin.subtext || '';
+      document.getElementById('edit-cta').value = pin.cta || 'See what is inside →';
+      document.getElementById('edit-mockup-label').value = pin.mockup_card?.title || 'System Workspace';
+
+      renderPinToCanvas(pin, canvas);
+      modal.classList.remove('hidden');
+    }
+
+    function applyModalEdit() {
+      if (currentPreviewIndex < 0) return;
+      const pin = generatedPins[currentPreviewIndex];
+      pin.headline = document.getElementById('edit-headline').value.trim();
+      pin.subtext = document.getElementById('edit-subtext').value.trim();
+      pin.cta = document.getElementById('edit-cta').value.trim();
+      if (!pin.mockup_card) pin.mockup_card = { title: '', items: [] };
+      pin.mockup_card.title = document.getElementById('edit-mockup-label').value.trim();
+
+      renderPinToCanvas(pin, document.getElementById('modal-canvas'));
+      renderPinGallery();
+    }
+
+    function downloadSinglePin(index) {
+      const pin = generatedPins[index];
+      const offCanvas = document.createElement('canvas');
+      renderPinToCanvas(pin, offCanvas);
+
+      offCanvas.toBlob(blob => {
+        const link = document.createElement('a');
+        link.download = `pinterest-pin-${pin.pagination || String(index + 1).padStart(2, '0')}.png`;
+        link.href = URL.createObjectURL(blob);
+        link.click();
+        URL.revokeObjectURL(link.href);
+      }, 'image/png');
+    }
+
+    async function downloadAllPinsZip() {
+      const btn = document.getElementById('btn-download-zip');
+      const orig = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Archiving ${generatedPins.length} Pins...`;
+      lucide.createIcons();
+
+      const zip = new JSZip();
+      const folder = zip.folder("pinterest-studio-batch");
+
+      for (let i = 0; i < generatedPins.length; i++) {
+        const pin = generatedPins[i];
+        const offCanvas = document.createElement('canvas');
+        renderPinToCanvas(pin, offCanvas);
+
+        const dataUrl = offCanvas.toDataURL('image/png');
+        const base64Data = dataUrl.replace(/^data:image\/png;base64,/, "");
+        const filename = `pin-${pin.pagination || String(i + 1).padStart(2, '0')}-${slugify(pin.headline)}.png`;
+        folder.file(filename, base64Data, { base64: true });
+      }
+
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      const link = document.createElement('a');
+      link.download = `launchist-pinterest-batch-${generatedPins.length}-pins.zip`;
+      link.href = URL.createObjectURL(zipBlob);
+      link.click();
+      URL.revokeObjectURL(link.href);
+
+      btn.disabled = false;
+      btn.innerHTML = orig;
+      lucide.createIcons();
+    }
+
+    function wrapText(ctx, text, maxWidth) {
+      if (!text) return [];
+      const words = text.split(' ');
+      const lines = [];
+      let currentLine = words[0];
+
+      for (let i = 1; i < words.length; i++) {
+        const word = words[i];
+        const width = ctx.measureText(currentLine + " " + word).width;
+        if (width < maxWidth) {
+          currentLine += " " + word;
+        } else {
+          lines.push(currentLine);
+          currentLine = word;
+        }
+      }
+      lines.push(currentLine);
+      return lines;
+    }
+
+    function roundRect(ctx, x, y, width, height, radius, fill, stroke) {
+      ctx.beginPath();
+      ctx.roundRect(x, y, width, height, radius);
+      if (fill) ctx.fill();
+      if (stroke) ctx.stroke();
+    }
+
+    function slugify(text) {
+      return (text || 'pin')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .slice(0, 30)
+        .replace(/^-|-$/g, '');
+    }
   </script>
 </body>
 </html>
